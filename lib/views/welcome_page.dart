@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spa_app/views/login_page.dart';
+import 'package:spa_app/views/signup_page.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -85,7 +86,10 @@ class WelcomePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   child: InkWell(
                     // TODO: continue to apply the route
-                    onTap: () => Navigator.pushNamed(context, ""),
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => SignUp()));
+                    },
                     child: Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 15, horizontal: 40),
