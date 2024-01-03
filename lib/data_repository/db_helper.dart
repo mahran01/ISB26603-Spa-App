@@ -5,10 +5,10 @@ import 'package:spa_app/models/user.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-class SpaDatabase {
-  static final SpaDatabase instance = SpaDatabase._initialize();
+class DBHelper {
+  static final DBHelper instance = DBHelper._initialize();
   static Database? _database;
-  SpaDatabase._initialize();
+  DBHelper._initialize();
 
   Future _createDB(Database db, int version) async {
     const intPrimaryType = 'INTEGER PRIMARY KEY NOT NULL';
@@ -71,6 +71,60 @@ class SpaDatabase {
       _database = await _initDB('spa.db');
       return _database;
     }
+  }
+
+  Future<bool> _loginAsUser(String username, String password) async {
+    final db = await instance.database;
+    final maps = await db!.query(
+      userTable,
+      columns: UserFields.allFields,
+      where: '${UserFields.username} = ? AND ${UserFields.password} = ?',
+      whereArgs: [username, password],
+    );
+    return maps.isNotEmpty;
+  }
+
+  Future<bool> _loginAsAdmin(String username, String password) async {
+    final db = await instance.database;
+    final maps = await db!.query(
+      adminTable,
+      columns: AdminFields.allFields,
+      where: '${AdminFields.username} = ? AND ${AdminFields.password} = ?',
+      whereArgs: [username, password],
+    );
+    return maps.isNotEmpty;
+  }
+
+  Future<bool> login(String username, String password) async {
+    return await _loginAsUser(username, password) ||
+        await _loginAsAdmin(username, password);
+  }
+
+  Future<bool> _userContainUsername(String username) async {
+    final db = await instance.database;
+    final maps = await db!.query(
+      userTable,
+      columns: UserFields.allFields,
+      where: '${UserFields.username} = ?',
+      whereArgs: [username],
+    );
+    return maps.isNotEmpty;
+  }
+
+  Future<bool> _adminContainUsername(String username) async {
+    final db = await instance.database;
+    final maps = await db!.query(
+      adminTable,
+      columns: AdminFields.allFields,
+      where: '${AdminFields.username} = ?',
+      whereArgs: [username],
+    );
+    return maps.isNotEmpty;
+  }
+
+  Future<bool> alreadyExistUsername(String username) async {
+    return await _userContainUsername(username) ||
+        await _adminContainUsername(username);
   }
 
   /// Method to create user
