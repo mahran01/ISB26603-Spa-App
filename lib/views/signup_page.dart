@@ -107,7 +107,7 @@ class _SignUpState extends State<SignUp> {
                     controller: _conUserName,
                     icon: Icons.person_3,
                     inputType: TextInputType.name,
-                    hintName: 'User Name',
+                    hintName: 'Username',
                   ),
                   SizedBox(height: 10.0),
                   getTextFormField(
@@ -123,16 +123,19 @@ class _SignUpState extends State<SignUp> {
                     hintName: 'Confirm Password',
                     isObscureText: true,
                   ),
-                  SizedBox(height: 10.0),
-                  SpaLongButton(onTap: signUp, text: "Sign Up"),
+                  SizedBox(height: 20.0),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 50),
+                    child: SpaLongButton(onTap: signUp, text: "Sign Up"),
+                  ),
                   Container(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text('Already have an account? '),
                         TextButton(
-                          style:
-                              TextButton.styleFrom(primary: Color(0xFF7165D6)),
+                          style: TextButton.styleFrom(
+                              foregroundColor: Theme.of(context).primaryColor),
                           child: Text('Login'),
                           onPressed: () {
                             Navigator.push(

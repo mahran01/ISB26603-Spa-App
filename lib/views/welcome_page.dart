@@ -21,10 +21,10 @@ class WelcomePage extends StatelessWidget {
               child: TextButton(
                 // TODO: continue to apply the route
                 onPressed: () => Navigator.pushNamed(context, ""),
-                child: const Text(
+                child: Text(
                   "SKIP",
                   style: TextStyle(
-                    color: Color(0xFF7165D6),
+                    color: Theme.of(context).primaryColor,
                     fontSize: 20,
                   ),
                 ),
@@ -36,11 +36,11 @@ class WelcomePage extends StatelessWidget {
               child: Image.asset("images/WelcomePage.jpg"),
             ),
             const SizedBox(height: 30),
-            const Text(
+            Text(
               "Facial Treatment Appointment",
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Color(0xFF7165D6),
+                color: Theme.of(context).primaryColor,
                 fontSize: 35,
                 fontWeight: FontWeight.bold,
               ),
