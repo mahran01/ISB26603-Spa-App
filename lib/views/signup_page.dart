@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:spa_app/components/spa_long_button.dart';
 import 'package:spa_app/components/validation.dart';
 import 'package:spa_app/components/get_textformfield.dart';
-import 'package:spa_app/data_repository/spa_database.dart';
+import 'package:spa_app/data_repository/db_helper.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/views/login_page.dart';
 
@@ -27,7 +28,7 @@ class _SignUpState extends State<SignUp> {
   @override
   void initState() {
     super.initState();
-    db = SpaDatabase;
+    db = null;
   }
 
   signUp() async {
@@ -63,7 +64,6 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF7165D6),
         title: Text('Signup'),
       ),
       body: Form(
@@ -123,21 +123,8 @@ class _SignUpState extends State<SignUp> {
                     hintName: 'Confirm Password',
                     isObscureText: true,
                   ),
-                  Container(
-                    margin: EdgeInsets.all(20.0),
-                    width: double.infinity,
-                    child: TextButton(
-                      child: Text(
-                        'Sign Up',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: signUp,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color(0xFF7165D6),
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                  ),
+                  SizedBox(height: 10.0),
+                  SpaLongButton(onTap: signUp, text: "Sign Up"),
                   Container(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
