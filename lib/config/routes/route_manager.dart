@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spa_app/views/admin/admin_home_page.dart';
-import 'package:spa_app/views/user/user_home_page.dart';
+import 'package:spa_app/views/user/bottom_navigation.dart';
 
 class RouteManager {
   static void adminHome(context) {
@@ -16,7 +16,7 @@ class RouteManager {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const UserHomePage(),
+        builder: (context) => const BottomNavigation(),
       ),
     );
   }

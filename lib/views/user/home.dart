@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:spa_app/components/facial_decoration.dart';
-import 'package:spa_app/components/treatment_detail.dart';
+import 'package:spa_app/models/user.dart';
+import 'package:spa_app/services/user_service.dart';
+import 'package:spa_app/views/user/al_treatmentdetail.dart';
 import 'package:spa_app/data_repository/assign_value.dart';
 import 'package:spa_app/models/treatment.dart';
 import 'package:spa_app/views/login_page.dart';
 
 class Home extends StatelessWidget {
-  final List<Treatment> treat = AssignValue.treatment;
-  Home({super.key});
+  const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
+    User user = context.read<UserService>().getCurrentUser!;
+    String userid, name, email, phone, username, password;
+    userid = user.userid.toString();
+    name = user.name;
+    email = user.email;
+    phone = user.phone.toString();
+    username = user.username;
+    password = user.password;
+    final List<Treatment> treat = AssignValue.treatment;
+
     final double maxWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SingleChildScrollView(
@@ -72,7 +84,12 @@ class Home extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
                     onTap: () {
-                      showAlertDialog(context);
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return TreatmentDetail();
+                        },
+                      );
                     },
                     child: Container(
                       margin: EdgeInsets.all(10),
@@ -113,12 +130,6 @@ class Home extends StatelessWidget {
                               ),
                             ),
                           ),
-                          // Text(
-                          //   treatment.price,
-                          //   style: TextStyle(
-                          //     color: Colors.black45,
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),

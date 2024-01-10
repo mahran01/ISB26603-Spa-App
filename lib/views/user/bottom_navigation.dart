@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spa_app/models/treatment.dart';
 import 'package:spa_app/views/user/home.dart';
+import 'package:spa_app/views/user/setting.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({super.key});
@@ -13,7 +14,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
   int _selectedIndex = 0;
   // 8
   static List<Widget> pages = <Widget>[
-    Home(),
+    const Home(),
+    const Setting(),
   ];
 
   // 9
@@ -41,8 +43,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
         // ignore: prefer_const_literals_to_create_immutables
         items: <BottomNavigationBarItem>[
           const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          const BottomNavigationBarItem(
-              icon: Icon(Icons.schedule), label: 'Shcedule'),
+          //  const BottomNavigationBarItem(
+          //    icon: Icon(Icons.schedule), label: 'Shcedule'),
           const BottomNavigationBarItem(
               icon: Icon(Icons.settings), label: 'Setting'),
         ],
