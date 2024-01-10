@@ -1,44 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/components/spa_long_button.dart';
 import 'package:spa_app/components/validation.dart';
 import 'package:spa_app/components/get_textformfield.dart';
 import 'package:spa_app/data_repository/db_helper.dart';
 import 'package:spa_app/models/user.dart';
+import 'package:spa_app/services/user_service.dart';
 import 'package:spa_app/views/login_page.dart';
 
-class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  State<SignUp> createState() => _SignUpState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpState extends State<SignUp> {
+class _SignUpPageState extends State<SignUpPage> {
   final _formKey = new GlobalKey<FormState>();
 
   final _conUserId = TextEditingController();
   final _conName = TextEditingController();
   final _conEmail = TextEditingController();
   final _conPhone = TextEditingController();
-  final _conUserName = TextEditingController();
+  final _conUsername = TextEditingController();
   final _conPassword = TextEditingController();
   final _conCPassword = TextEditingController();
-  var db;
 
   @override
   void initState() {
     super.initState();
-    db = null;
   }
 
   signUp() async {
-    String userId = _conUserId.text;
-    String Name = _conName.text;
+    DBHelper db = DBHelper.instance;
+
+    String name = _conName.text;
     String email = _conEmail.text;
     String phone = _conPhone.text;
-    String userName = _conUserName.text;
+    String username = _conUsername.text;
     String password = _conPassword.text;
     String cpassword = _conCPassword.text;
+
+    User user = User(
+      userid: 0,
+      name: name,
+      email: email,
+      phone: int.parse(phone),
+      username: username,
+      password: password,
+    );
+
+    if (context.mounted) {
+      String result = await context.read<UserService>().register(user);
+      if (result != "OK")
+        showSnackBar(context, result);
+      else
+        showSnackBar(context, "Successfully register");
+    }
 
     // if (_formKey.currentState!.validate()) {
     //   if (password != cpassword) {
@@ -77,12 +96,6 @@ class _SignUpState extends State<SignUp> {
                 children: [
                   SizedBox(height: 10.0),
                   getTextFormField(
-                    controller: _conUserId,
-                    icon: Icons.person,
-                    hintName: 'User ID',
-                  ),
-                  SizedBox(height: 10.0),
-                  getTextFormField(
                     controller: _conName,
                     icon: Icons.person_outline,
                     inputType: TextInputType.name,
@@ -104,7 +117,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                   SizedBox(height: 10.0),
                   getTextFormField(
-                    controller: _conUserName,
+                    controller: _conUsername,
                     icon: Icons.person_3,
                     inputType: TextInputType.name,
                     hintName: 'Username',

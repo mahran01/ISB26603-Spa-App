@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:spa_app/models/account.dart';
 import 'package:spa_app/models/admin.dart';
 import 'package:spa_app/models/facialbook.dart';
 import 'package:spa_app/models/user.dart';
@@ -41,6 +42,11 @@ class DBHelper {
         ${AdminFields.username} $textUniqueType,
         ${AdminFields.password} $textType
       )''');
+
+    await db.insert(
+      adminTable,
+      Account(username: "admin", password: "123").toJson(),
+    );
   }
 
   Future _onConfigure(Database db) async {
@@ -73,7 +79,7 @@ class DBHelper {
     }
   }
 
-  Future<bool> _loginAsUser(String username, String password) async {
+  Future<bool> userExist(String username, String password) async {
     final db = await instance.database;
     final maps = await db!.query(
       userTable,
@@ -84,7 +90,7 @@ class DBHelper {
     return maps.isNotEmpty;
   }
 
-  Future<bool> _loginAsAdmin(String username, String password) async {
+  Future<bool> adminExists(String username, String password) async {
     final db = await instance.database;
     final maps = await db!.query(
       adminTable,
@@ -93,11 +99,6 @@ class DBHelper {
       whereArgs: [username, password],
     );
     return maps.isNotEmpty;
-  }
-
-  Future<bool> login(String username, String password) async {
-    return await _loginAsUser(username, password) ||
-        await _loginAsAdmin(username, password);
   }
 
   Future<bool> _userContainUsername(String username) async {
@@ -122,7 +123,7 @@ class DBHelper {
     return maps.isNotEmpty;
   }
 
-  Future<bool> alreadyExistUsername(String username) async {
+  Future<bool> containsUsername(String username) async {
     return await _userContainUsername(username) ||
         await _adminContainUsername(username);
   }
@@ -130,10 +131,15 @@ class DBHelper {
   /// Method to create user
   /// Use:-
   /// Registration
-  Future<User> createUser(User user) async {
+  Future<Account> createUser(Account account) async {
+    if (await containsUsername(account.username)) {
+      throw Exception("Username already exist.");
+    }
     final db = await instance.database;
-    await db!.insert(userTable, user.toJson());
-    return user;
+    Map<String, Object?> accountToRegister = account.toJson();
+    accountToRegister.remove(UserFields.userid);
+    await db!.insert(userTable, accountToRegister);
+    return account;
   }
 
   /// Method to get user based on their username.
@@ -157,6 +163,27 @@ class DBHelper {
     }
   }
 
+  /// Method to get user based on their username.
+  /// Use:-
+  /// authentication (login)
+  /// validation (registration)/(change username)
+  /// search
+  Future<User> getUserById(int id) async {
+    final db = await instance.database;
+    final maps = await db!.query(
+      userTable,
+      columns: UserFields.allFields,
+      where: '${UserFields.userid} = ?',
+      whereArgs: [id],
+    );
+
+    if (maps.isNotEmpty) {
+      return User.fromJson(maps.first);
+    } else {
+      throw Exception('User ID: $id not found in the database.');
+    }
+  }
+
   /// Method to get all user.
   /// Use:-
   /// Display on admin page
@@ -174,12 +201,17 @@ class DBHelper {
   /// Edit user info
   Future<int> updateUser(User user) async {
     final db = await instance.database;
-    return db!.update(
-      userTable,
-      user.toJson(),
-      where: '${UserFields.userid} = ?',
-      whereArgs: [user.userid],
-    );
+    User old = await getUserById(user.userid);
+    if (old.username == user.username ||
+        !await containsUsername(user.username)) {
+      return db!.update(
+        userTable,
+        user.toJson(),
+        where: '${UserFields.userid} = ?',
+        whereArgs: [user.userid],
+      );
+    }
+    return 0;
   }
 
   /// Method to delete user base on userid.
@@ -238,10 +270,13 @@ class DBHelper {
   /// Method to create admin
   /// Use:-
   /// Registration of another admin
-  Future<Admin> createAdmin(Admin admin) async {
+  Future<Account> createAdmin(Account account) async {
+    if (!await containsUsername(account.username)) {
+      throw Exception("Username already exist.");
+    }
     final db = await instance.database;
-    await db!.insert(adminTable, admin.toJson());
-    return admin;
+    await db!.insert(userTable, account.toJson());
+    return account;
   }
 
   /// Method to get admin based on their username.

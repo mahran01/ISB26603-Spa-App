@@ -57,8 +57,8 @@ class Facialbook {
       );
 
   static Facialbook fromJson(Map<String, Object?> json) => Facialbook(
-        bookid: int.parse(json[FacialbookFields.bookid] as String),
-        userid: int.parse(json[FacialbookFields.userid] as String),
+        bookid: json[FacialbookFields.bookid] as int,
+        userid: json[FacialbookFields.userid] as int,
         appointmentDate:
             DateTime.parse(json[FacialbookFields.appointmentDate] as String),
         appointmentTime:

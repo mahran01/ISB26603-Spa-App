@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:spa_app/config/theme/app_theme.dart';
+import 'package:spa_app/services/user_service.dart';
 import 'package:spa_app/views/welcome_page.dart';
 
 void main() {
@@ -11,10 +13,17 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: const WelcomePage(),
-      theme: spaTheme(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => UserService(),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: const WelcomePage(),
+        theme: spaTheme(),
+      ),
     );
   }
 }

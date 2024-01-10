@@ -1,3 +1,5 @@
+import 'package:spa_app/models/account.dart';
+
 const String userTable = 'user';
 
 class UserFields {
@@ -18,37 +20,35 @@ class UserFields {
   ];
 }
 
-class User {
+class User extends Account {
   int userid;
   String name;
   String email;
   int phone;
-  String username;
-  String password;
 
   User({
     required this.userid,
     required this.name,
     required this.email,
     required this.phone,
-    required this.username,
-    required this.password,
+    required super.username,
+    required super.password,
   });
 
+  @override
   Map<String, Object?> toJson() => {
         UserFields.userid: userid,
         UserFields.name: name,
         UserFields.email: email,
         UserFields.phone: phone,
-        UserFields.username: username,
-        UserFields.password: password,
+        ...super.toJson(),
       };
 
   static User fromJson(Map<String, Object?> json) => User(
-        userid: int.parse(json[UserFields.userid] as String),
+        userid: json[UserFields.userid] as int,
         name: json[UserFields.name] as String,
         email: json[UserFields.email] as String,
-        phone: int.parse(json[UserFields.phone] as String),
+        phone: json[UserFields.phone] as int,
         username: json[UserFields.username] as String,
         password: json[UserFields.password] as String,
       );

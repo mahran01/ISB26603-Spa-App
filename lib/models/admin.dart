@@ -1,3 +1,5 @@
+import 'package:spa_app/models/account.dart';
+
 const String adminTable = 'admin';
 
 class AdminFields {
@@ -12,25 +14,23 @@ class AdminFields {
   ];
 }
 
-class Admin {
+class Admin extends Account {
   int adminid;
-  String username;
-  String password;
 
   Admin({
     required this.adminid,
-    required this.username,
-    required this.password,
+    required super.username,
+    required super.password,
   });
 
+  @override
   Map<String, Object?> toJson() => {
         AdminFields.adminid: adminid,
-        AdminFields.username: username,
-        AdminFields.password: password,
+        ...super.toJson(),
       };
 
   static Admin fromJson(Map<String, Object?> json) => Admin(
-        adminid: int.parse(json[AdminFields.adminid] as String),
+        adminid: json[AdminFields.adminid] as int,
         username: json[AdminFields.username] as String,
         password: json[AdminFields.password] as String,
       );
