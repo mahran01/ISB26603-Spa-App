@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spa_app/components/get_textformfield.dart';
 import 'package:spa_app/components/spa_long_button.dart';
-import 'package:spa_app/views/bottom_navigation.dart';
+import 'package:spa_app/views/user/bottom_navigation.dart';
 import 'package:spa_app/views/signup_page.dart';
 
 class LoginPage extends StatefulWidget {

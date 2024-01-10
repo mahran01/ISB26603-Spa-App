@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spa_app/models/treatment.dart';
-import 'package:spa_app/views/home.dart';
+import 'package:spa_app/views/user/home.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({super.key});
