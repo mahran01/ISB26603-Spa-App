@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:spa_app/components/get_textformfield.dart';
 import 'package:spa_app/components/spa_long_button.dart';
+import 'package:spa_app/views/bottom_navigation.dart';
 import 'package:spa_app/views/signup_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -47,7 +48,14 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 20.0),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 50),
-                  child: SpaLongButton(onTap: () {}, text: "Log In"),
+                  child: SpaLongButton(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BottomNavigation()));
+                      },
+                      text: "Log In"),
                 ),
                 Container(
                   child: Row(
