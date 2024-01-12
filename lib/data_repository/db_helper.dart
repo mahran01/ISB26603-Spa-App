@@ -56,7 +56,6 @@ class DBHelper {
   Future<Database> _initDB(String filename) async {
     final databasePath = await getDatabasesPath();
     final path = join(databasePath, filename);
-
     return await openDatabase(
       path,
       version: 1,
@@ -232,10 +231,9 @@ class DBHelper {
   /// Create facialbook for user order.
   Future<Facialbook> createFacialbook(Facialbook facialbook) async {
     final db = await instance.database;
-    await db!.insert(
-      facialbookTable,
-      facialbook.toJson(),
-    );
+    Map<String, Object?> fbToRegister = facialbook.toJson();
+    fbToRegister.remove(FacialbookFields.bookid);
+    await db!.insert(facialbookTable, fbToRegister);
     return facialbook;
   }
 

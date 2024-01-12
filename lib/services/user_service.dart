@@ -10,13 +10,11 @@ class UserService with ChangeNotifier {
   late User? _currentUser;
   late Admin? _currentAdmin;
   late AccountType _currentAccountType;
-  bool _busyCreate = false;
   bool _userExists = false;
 
   User? get getCurrentUser => _currentUser;
   Admin? get getCurrentAdmin => _currentAdmin;
   AccountType get getCurrentAccountType => _currentAccountType;
-  bool get getBusyCreate => _busyCreate;
   bool get getUserExists => _userExists;
 
   set setUserExists(bool value) {
@@ -62,6 +60,7 @@ class UserService with ChangeNotifier {
   Future<String> update(Account account) async {
     DBHelper db = DBHelper.instance;
     String result = "OK";
+
     try {
       switch (_currentAccountType) {
         case AccountType.user:
@@ -77,28 +76,6 @@ class UserService with ChangeNotifier {
         default:
           throw Exception("Account type error.");
       }
-      notifyListeners();
-    } catch (e) {
-      result = getHumanReadableError(e.toString());
-    }
-    return result;
-  }
-
-  Future<String> checkIfUserExists(String username) async {
-    String result = "OK";
-    try {
-      await DBHelper.instance.getUser(username);
-    } catch (e) {
-      result = getHumanReadableError(e.toString());
-    }
-    return result;
-  }
-
-  Future<String> updateCurrentUser(User user) async {
-    String result = "OK";
-    try {
-      await DBHelper.instance.updateUser(user);
-      _currentUser = user;
       notifyListeners();
     } catch (e) {
       result = getHumanReadableError(e.toString());
