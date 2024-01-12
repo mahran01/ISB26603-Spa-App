@@ -45,9 +45,11 @@ class Home extends StatelessWidget {
                     facial_Decoration(
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BookingPage(),
+                          ),
+                        );
                       },
                       text1: "Facial Treatment",
                       text2: "Book an appointment",

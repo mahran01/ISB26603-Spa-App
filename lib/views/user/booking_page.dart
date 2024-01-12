@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_app/data_repository/assign_value.dart';
 import 'package:spa_app/models/treatment.dart';
+import 'package:spa_app/views/user/bottom_navigation.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/models/facialbook.dart';
@@ -254,6 +255,12 @@ class _BookingPageState extends State<BookingPage> {
         showSnackBar(context, result);
         return;
       } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const BottomNavigation(initialIndex: 1),
+          ),
+        );
         showSnackBar(context, "Added successsfully");
       }
     });
