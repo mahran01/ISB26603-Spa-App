@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_app/config/theme/app_theme.dart';
+import 'package:spa_app/services/facialbook_service.dart';
 import 'package:spa_app/services/user_service.dart';
 import 'package:spa_app/views/welcome_page.dart';
 
@@ -17,6 +18,9 @@ class MainApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) => UserService(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => FacialBookService(),
         ),
       ],
       child: MaterialApp(

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_app/components/facial_decoration.dart';
+import 'package:spa_app/config/routes/route_manager.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';
 import 'package:spa_app/views/user/al_treatmentdetail.dart';
 import 'package:spa_app/data_repository/assign_value.dart';
 import 'package:spa_app/models/treatment.dart';
 import 'package:spa_app/views/login_page.dart';
+import 'package:spa_app/views/user/booking_page.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -35,10 +37,14 @@ class Home extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   facial_Decoration(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
-                    },
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        // For Booking from other button than appointment
+                        builder: (context) =>
+                            const BookingPage(selectedIndex: null),
+                      ),
+                    ),
                     text1: "Facial Treatment",
                     text2: "Book an appointment",
                     icon: Icons.add,

@@ -43,11 +43,14 @@ class Facialbook {
     );
   }
 
+  static _toStringTime(TimeOfDay tod) =>
+      "${tod.hour.toString().padLeft(2, '0')}:${tod.minute.toString().padLeft(2, '0')}";
+
   Map<String, Object?> toJson() => {
         FacialbookFields.bookid: bookid,
         FacialbookFields.userid: userid,
-        FacialbookFields.appointmentDate: appointmentDate,
-        FacialbookFields.appointmentTime: appointmentTime,
+        FacialbookFields.appointmentDate: appointmentDate.toIso8601String(),
+        FacialbookFields.appointmentTime: _toStringTime(appointmentTime),
         FacialbookFields.services: services,
       };
 

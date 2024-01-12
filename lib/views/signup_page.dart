@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:form_validator/form_validator.dart';
+
 import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/components/spa_long_button.dart';
-import 'package:spa_app/components/validation.dart';
 import 'package:spa_app/components/get_textformfield.dart';
-import 'package:spa_app/data_repository/db_helper.dart';
+import 'package:spa_app/config/routes/route_manager.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';
-import 'package:spa_app/views/login_page.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -17,9 +17,8 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final _formKey = new GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
-  final _conUserId = TextEditingController();
   final _conName = TextEditingController();
   final _conEmail = TextEditingController();
   final _conPhone = TextEditingController();
@@ -33,50 +32,36 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   signUp() async {
-    DBHelper db = DBHelper.instance;
+    if (_formKey.currentState!.validate()) {
+      String name = _conName.text;
+      String email = _conEmail.text;
+      String phone = _conPhone.text;
+      String username = _conUsername.text;
+      String password = _conPassword.text;
+      String cpassword = _conCPassword.text;
 
-    String name = _conName.text;
-    String email = _conEmail.text;
-    String phone = _conPhone.text;
-    String username = _conUsername.text;
-    String password = _conPassword.text;
-    String cpassword = _conCPassword.text;
-
-    User user = User(
-      userid: 0,
-      name: name,
-      email: email,
-      phone: int.parse(phone),
-      username: username,
-      password: password,
-    );
-
-    if (context.mounted) {
-      String result = await context.read<UserService>().register(user);
-      if (result != "OK")
-        showSnackBar(context, result);
-      else
-        showSnackBar(context, "Successfully register");
+      User user = User(
+        userid: 0,
+        name: name,
+        email: email,
+        phone: int.parse(phone),
+        username: username,
+        password: password,
+      );
+      if (password != cpassword) {
+        (context, 'Password Mismatch');
+      } else {
+        _formKey.currentState?.save();
+        await context.read<UserService>().register(user).then((result) {
+          if (result != "OK") {
+            showSnackBar(context, result);
+          } else {
+            showSnackBar(context, "Successfully register");
+            RouteManager.login(context);
+          }
+        });
+      }
     }
-
-    // if (_formKey.currentState!.validate()) {
-    //   if (password != cpassword) {
-    //     (context, 'Password Mismatch');
-    //   } else {
-    //     _formKey.currentState?.save();
-
-    //     User user = User(userId, Name, email, phone, userName, password);
-    //     await db.saveData(user).then((userData) {
-    //       (context, "Successfully Saved");
-
-    //       Navigator.push(
-    //           context, MaterialPageRoute(builder: (_) => LoginPage()));
-    //     }).catchError((error) {
-    //       print(error);
-    //       (context, "Error: Data Save Fail");
-    //     });
-    //   }
-    // }
   }
 
   @override
@@ -100,6 +85,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     icon: Icons.person_outline,
                     inputType: TextInputType.name,
                     hintName: 'Full Name',
+                    validator: ValidationBuilder()
+                        .name()
+                        .minLength(5)
+                        .maxLength(100)
+                        .build(),
                   ),
                   SizedBox(height: 10.0),
                   getTextFormField(
@@ -107,6 +97,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     icon: Icons.email,
                     inputType: TextInputType.emailAddress,
                     hintName: 'Email',
+                    validator: ValidationBuilder()
+                        .email()
+                        .minLength(5)
+                        .maxLength(100)
+                        .build(),
                   ),
                   SizedBox(height: 10.0),
                   getTextFormField(
@@ -114,6 +109,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     icon: Icons.phone,
                     inputType: TextInputType.name,
                     hintName: 'Phone Number',
+                    validator: ValidationBuilder()
+                        .numeric()
+                        .minLength(8)
+                        .maxLength(14)
+                        .build(),
                   ),
                   SizedBox(height: 10.0),
                   getTextFormField(
@@ -121,6 +121,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     icon: Icons.person_3,
                     inputType: TextInputType.name,
                     hintName: 'Username',
+                    validator: ValidationBuilder().username().build(),
                   ),
                   SizedBox(height: 10.0),
                   getTextFormField(
@@ -128,6 +129,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     icon: Icons.lock,
                     hintName: 'Password',
                     isObscureText: true,
+                    validator: ValidationBuilder().password().build(),
                   ),
                   SizedBox(height: 10.0),
                   getTextFormField(
@@ -150,12 +152,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           style: TextButton.styleFrom(
                               foregroundColor: Theme.of(context).primaryColor),
                           child: Text('Login'),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginPage()));
-                          },
+                          onPressed: () => RouteManager.login(context),
                         )
                       ],
                     ),
@@ -166,6 +163,36 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
       ),
+    );
+  }
+}
+
+extension on ValidationBuilder {
+  ValidationBuilder username() {
+    return regExp(
+        RegExp(r'^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$'),
+        "Between 8-20 characters long");
+  }
+
+  ValidationBuilder password() {
+    return regExp(
+      RegExp(
+          r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'),
+      "Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character",
+    );
+  }
+
+  ValidationBuilder name() {
+    return regExp(
+      RegExp(r"^\s*([A-Za-z]{1,}([\.,] |[-']| @ | ))*[A-Za-z]+\.?\s*$"),
+      "",
+    );
+  }
+
+  ValidationBuilder numeric() {
+    return regExp(
+      RegExp(r"^([0-9]*)$"),
+      "Should only contains [0-9]",
     );
   }
 }

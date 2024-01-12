@@ -4,9 +4,7 @@ import 'package:spa_app/components/get_textformfield.dart';
 import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/components/spa_long_button.dart';
 import 'package:spa_app/config/routes/route_manager.dart';
-import 'package:spa_app/models/account.dart';
 import 'package:spa_app/services/user_service.dart';
-import 'package:spa_app/views/signup_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -16,8 +14,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = new GlobalKey<FormState>();
-
   final _conUsername = TextEditingController();
   final _conPassword = TextEditingController();
 
@@ -30,24 +26,26 @@ class _LoginPageState extends State<LoginPage> {
     } else if (password.isEmpty) {
       showSnackBar(context, 'Please enter your password.');
     } else {
-      String result = await context
+      await context
           .read<UserService>()
-          .login(_conUsername.text.trim(), _conPassword.text);
-      if (result != 'OK') {
-        context.mounted ? showSnackBar(context, result) : 0;
-        return;
-      } else if (context.mounted) {
-        AccountType accountType =
-            context.read<UserService>().getCurrentAccountType;
-        switch (accountType) {
-          case AccountType.user:
-            RouteManager.userHome(context);
-            break;
-          case AccountType.admin:
-            RouteManager.adminHome(context);
-            break;
+          .login(_conUsername.text.trim(), _conPassword.text)
+          .then((result) {
+        if (result != 'OK') {
+          showSnackBar(context, result);
+          return;
+        } else {
+          AccountType accountType =
+              context.read<UserService>().getCurrentAccountType;
+          switch (accountType) {
+            case AccountType.user:
+              RouteManager.userHome(context);
+              break;
+            case AccountType.admin:
+              RouteManager.adminHome(context);
+              break;
+          }
         }
-      }
+      });
     }
   }
 
@@ -69,9 +67,10 @@ class _LoginPageState extends State<LoginPage> {
                   child: Image.asset("images/WelcomePage.jpg"),
                 ),
                 getTextFormField(
-                    controller: _conUsername,
-                    icon: Icons.person,
-                    hintName: 'Username'),
+                  controller: _conUsername,
+                  icon: Icons.person,
+                  hintName: 'Username',
+                ),
                 SizedBox(height: 10.0),
                 getTextFormField(
                   controller: _conPassword,
@@ -93,12 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                         style: TextButton.styleFrom(
                             foregroundColor: Theme.of(context).primaryColor),
                         child: Text('Sign Up'),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SignUpPage()));
-                        },
+                        onPressed: () => RouteManager.signup(context),
                       )
                     ],
                   ),
