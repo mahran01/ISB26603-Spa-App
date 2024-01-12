@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spa_app/components/spa_fix_button.dart';
+import 'package:spa_app/views/anonymous/default.dart';
 import 'package:spa_app/views/login_page.dart';
 import 'package:spa_app/views/signup_page.dart';
 
@@ -20,7 +21,12 @@ class WelcomePage extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: TextButton(
                 // TODO: continue to apply the route
-                onPressed: () => Navigator.pushNamed(context, ""),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DefaultPage(),
+                  ),
+                ),
                 child: Text(
                   "SKIP",
                   style: TextStyle(

@@ -15,15 +15,16 @@ class AdminHomePage extends StatelessWidget {
     password = admin.password;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Admin Home'),
-        ),
-        body: Column(
-          children: [
-            Text("User ID: $adminid"),
-            Text("Username: $username"),
-            Text("Password: $password"),
-          ],
-        ));
+      appBar: AppBar(
+        title: Text('Admin Home'),
+      ),
+      body: Column(
+        children: [
+          Text("User ID: $adminid"),
+          Text("Username: $username"),
+          Text("Password: $password"),
+        ],
+      ),
+    );
   }
 }
