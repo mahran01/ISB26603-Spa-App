@@ -69,6 +69,7 @@ class facial_Decoration extends StatelessWidget {
             SizedBox(height: 5),
             Text(
               text2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: color_text1,
               ),
