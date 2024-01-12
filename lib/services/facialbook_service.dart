@@ -1,14 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:spa_app/data_repository/db_helper.dart';
 import 'package:spa_app/models/facialbook.dart';
+import 'package:spa_app/models/user.dart';
 
 class FacialBookService with ChangeNotifier {
+  late List<Facialbook> _facialbookList;
+
+  get getFacialBookList => _facialbookList;
+
   Future<String> makeAppointment(Facialbook fb) async {
     DBHelper db = DBHelper.instance;
     String result = "OK";
     try {
       await db.createFacialbook(fb);
       notifyListeners();
+    } catch (e) {
+      result = getHumanReadableError(e.toString());
+    }
+    return result;
+  }
+
+  Future<String> bindUserFacialbook(int userid) async {
+    DBHelper db = DBHelper.instance;
+    String result = "OK";
+    try {
+      await db.getFacialbook(userid).then((value) => _facialbookList = value);
     } catch (e) {
       result = getHumanReadableError(e.toString());
     }
