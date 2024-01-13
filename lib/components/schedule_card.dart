@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ScheduleCard extends StatelessWidget {
+  final String bookid;
   final String services;
   final String date;
   final String time;
@@ -9,6 +10,7 @@ class ScheduleCard extends StatelessWidget {
 
   const ScheduleCard({
     super.key,
+    required this.bookid,
     required this.services,
     required this.date,
     required this.time,
@@ -41,7 +43,7 @@ class ScheduleCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  "Services",
+                  "Services#$bookid",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,

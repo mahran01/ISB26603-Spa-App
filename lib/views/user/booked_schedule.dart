@@ -4,23 +4,44 @@ import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_app/components/schedule_card.dart';
+import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/data_repository/db_helper.dart';
 import 'package:spa_app/models/facialbook.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/facialbook_service.dart';
 import 'package:spa_app/services/user_service.dart';
 
-class SchedulePage extends StatelessWidget {
+class SchedulePage extends StatefulWidget {
   const SchedulePage({super.key});
 
-  update() {}
+  @override
+  State<SchedulePage> createState() => _SchedulePageState();
+}
 
-  delete() {}
+class _SchedulePageState extends State<SchedulePage> {
+  update() async {}
+
+  late List<Facialbook> fb;
+
+  delete(BuildContext context, int index) async {
+    await context
+        .read<FacialBookService>()
+        .deleteFacialBook(fb[index].bookid)
+        .then((result) {
+      if (result != "OK") {
+        showSnackBar(context, result);
+      } else {
+        setState(() {
+          showSnackBar(context, "Successfully delete");
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<Facialbook> fb =
-        context.read<FacialBookService>().getFacialBookList ?? [];
+    late User user = context.read<UserService>().getCurrentUser!;
+    fb = context.read<FacialBookService>().getFacialBookList ?? [];
 
     return Scaffold(
       appBar: AppBar(
@@ -37,11 +58,12 @@ class SchedulePage extends StatelessWidget {
             itemCount: fb.length,
             itemBuilder: (BuildContext context, int index) {
               return ScheduleCard(
+                bookid: fb[index].bookid.toString(),
                 services: decode(fb[index].services),
                 date: DateFormat.yMMMd().format(fb[index].appointmentDate),
                 time: timeToString(fb[index].appointmentTime),
                 update: () {},
-                delete: () {},
+                delete: () => delete(context, index),
               );
             },
           ),
