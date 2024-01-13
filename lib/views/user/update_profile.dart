@@ -56,8 +56,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
           );
         }
       });
-    } else {
-      print("HELLO!");
     }
   }
 

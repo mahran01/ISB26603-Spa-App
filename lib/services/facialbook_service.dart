@@ -8,27 +8,28 @@ class FacialBookService with ChangeNotifier {
 
   List<Facialbook>? get getFacialBookList => _facialbookList;
 
+  void _updateFacialBookList() {
+    _facialbookList!.sort((a, b) {
+      DateTime aDate = a.appointmentDate;
+      DateTime bDate = b.appointmentDate;
+      bool n = bDate.isBefore(aDate);
+      if (!aDate.isAtSameMomentAs(bDate)) {
+        return n ? -1 : 1;
+      }
+      TimeOfDay aTime = a.appointmentTime;
+      TimeOfDay bTime = b.appointmentTime;
+      return bTime.hour - aTime.hour;
+    });
+  }
+
   Future<String> makeAppointment(Facialbook fb) async {
     DBHelper db = DBHelper.instance;
     String result = "OK";
     try {
       if (_facialbookList != null) {
-        await db.createFacialbook(fb).then(
-          (v) {
-            _facialbookList!.add(fb);
-            _facialbookList!.sort((a, b) {
-              DateTime aDate = a.appointmentDate;
-              DateTime bDate = b.appointmentDate;
-              bool n = bDate.isBefore(aDate);
-              if (!aDate.isAtSameMomentAs(bDate)) {
-                return n ? -1 : 1;
-              }
-              TimeOfDay aTime = a.appointmentTime;
-              TimeOfDay bTime = b.appointmentTime;
-              return bTime.hour - aTime.hour;
-            });
-          },
-        );
+        await db.createFacialbook(fb).then((v) {
+          _facialbookList!.add(fb);
+        });
         notifyListeners();
       } else {
         throw Exception("Facialbook List is not bind.");
@@ -55,6 +56,20 @@ class FacialBookService with ChangeNotifier {
     String result = "OK";
     try {
       _facialbookList = await db.getAllFacialbook();
+    } catch (e) {
+      result = getHumanReadableError(e.toString());
+    }
+    return result;
+  }
+
+  Future<String> deleteFacialBook(int bookid) async {
+    DBHelper db = DBHelper.instance;
+    String result = "OK";
+    try {
+      await db.deleteFacialBook(bookid).then((v) {
+        _facialbookList!.removeWhere((e) => e.bookid == bookid);
+      });
+      notifyListeners();
     } catch (e) {
       result = getHumanReadableError(e.toString());
     }

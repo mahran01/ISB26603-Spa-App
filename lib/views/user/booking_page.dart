@@ -255,13 +255,18 @@ class _BookingPageState extends State<BookingPage> {
         showSnackBar(context, result);
         return;
       } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const BottomNavigation(initialIndex: 1),
-          ),
-        );
-        showSnackBar(context, "Added successsfully");
+        context
+            .read<FacialBookService>()
+            .bindUserFacialbook(userid)
+            .then((value) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const BottomNavigation(initialIndex: 1),
+            ),
+          );
+          showSnackBar(context, "Added successsfully");
+        });
       }
     });
   }
