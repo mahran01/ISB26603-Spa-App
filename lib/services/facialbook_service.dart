@@ -23,7 +23,6 @@ class FacialBookService with ChangeNotifier {
               if (!aDate.isAtSameMomentAs(bDate)) {
                 return n ? -1 : 1;
               }
-              print("HEELOOOOO!");
               TimeOfDay aTime = a.appointmentTime;
               TimeOfDay bTime = b.appointmentTime;
               return bTime.hour - aTime.hour;
@@ -51,7 +50,7 @@ class FacialBookService with ChangeNotifier {
     return result;
   }
 
-  Future<String> bindAllFacialbook(int userid) async {
+  Future<String> bindAllFacialbook() async {
     DBHelper db = DBHelper.instance;
     String result = "OK";
     try {

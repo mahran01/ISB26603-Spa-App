@@ -12,17 +12,6 @@ class ProfileTable extends StatelessWidget {
         0: IntrinsicColumnWidth(),
         1: FlexColumnWidth(),
       },
-      border: TableBorder(
-        top: BorderSide(
-          color: Colors.white.withOpacity(0.1),
-        ),
-        horizontalInside: BorderSide(
-          color: Colors.white.withOpacity(0.1),
-        ),
-        bottom: BorderSide(
-          color: Colors.white.withOpacity(0.1),
-        ),
-      ),
       defaultVerticalAlignment: TableCellVerticalAlignment.top,
       children: data.entries
           .map(
@@ -41,7 +30,7 @@ class ProfileTable extends StatelessWidget {
                     style: Theme.of(context)
                         .textTheme
                         .labelLarge!
-                        .copyWith(color: Colors.grey[400]),
+                        .copyWith(color: Colors.grey[900]),
                   ),
                 ),
               ],

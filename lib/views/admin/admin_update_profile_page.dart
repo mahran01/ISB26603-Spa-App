@@ -5,45 +5,37 @@ import 'package:spa_app/components/get_textformfield.dart';
 import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/components/spa_long_button.dart';
 import 'package:spa_app/extensions/validator_extension.dart';
+import 'package:spa_app/models/admin.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';
 import 'package:spa_app/views/user/bottom_navigation.dart';
 import 'package:spa_app/views/user/setting.dart';
 
-class UpdateProfile extends StatefulWidget {
-  const UpdateProfile({super.key});
+class AdminUpdateProfilePage extends StatefulWidget {
+  const AdminUpdateProfilePage({super.key});
 
   @override
-  State<UpdateProfile> createState() => _UpdateProfileState();
+  State<AdminUpdateProfilePage> createState() => _AdminUpdateProfilePageState();
 }
 
-class _UpdateProfileState extends State<UpdateProfile> {
+class _AdminUpdateProfilePageState extends State<AdminUpdateProfilePage> {
   final _formKey = GlobalKey<FormState>();
 
-  late User user = context.read<UserService>().getCurrentUser!;
-  final TextEditingController _conName = TextEditingController();
-  final TextEditingController _conEmail = TextEditingController();
-  final TextEditingController _conPhone = TextEditingController();
+  late Admin admin = context.read<UserService>().getCurrentAdmin!;
   final TextEditingController _conUsername = TextEditingController();
   final TextEditingController _conPassword = TextEditingController();
 
   update() async {
     if (_formKey.currentState!.validate()) {
-      String name = _conName.text;
-      String email = _conEmail.text;
-      String phone = _conPhone.text;
       String username = _conUsername.text;
       String password = _conPassword.text;
 
-      User newUser = User(
-        userid: user.userid,
-        name: name,
-        email: email,
-        phone: int.parse(phone),
+      Admin newAdmin = Admin(
+        adminid: admin.adminid,
         username: username,
         password: password,
       );
-      await context.read<UserService>().update(newUser).then((result) {
+      await context.read<UserService>().update(newAdmin).then((result) {
         if (result != "OK") {
           showSnackBar(context, result);
         } else {
@@ -56,24 +48,15 @@ class _UpdateProfileState extends State<UpdateProfile> {
           );
         }
       });
-    } else {
-      print("HELLO!");
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    String userid, name, email, phone, username, password;
-    userid = user.userid.toString();
-    name = user.name;
-    email = user.email;
-    phone = user.phone.toString();
-    username = user.username;
-    password = user.password;
+    String username, password;
+    username = admin.username;
+    password = admin.password;
 
-    _conName.text = name;
-    _conEmail.text = email;
-    _conPhone.text = phone;
     _conUsername.text = username;
     _conPassword.text = password;
 
@@ -99,42 +82,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
                           image: AssetImage("images/profleimage.png"),
                           fit: BoxFit.contain),
                     ),
-                  ),
-                  SizedBox(height: 10.0),
-                  getTextFormField(
-                    controller: _conName,
-                    icon: Icons.person_outline,
-                    inputType: TextInputType.name,
-                    hintName: 'Full Name',
-                    validator: ValidationBuilder()
-                        .name()
-                        .minLength(5)
-                        .maxLength(100)
-                        .build(),
-                  ),
-                  SizedBox(height: 10.0),
-                  getTextFormField(
-                    controller: _conEmail,
-                    icon: Icons.email,
-                    inputType: TextInputType.emailAddress,
-                    hintName: 'Email',
-                    validator: ValidationBuilder()
-                        .email()
-                        .minLength(5)
-                        .maxLength(100)
-                        .build(),
-                  ),
-                  SizedBox(height: 10.0),
-                  getTextFormField(
-                    controller: _conPhone,
-                    icon: Icons.phone,
-                    inputType: TextInputType.name,
-                    hintName: 'Phone Number',
-                    validator: ValidationBuilder()
-                        .numeric()
-                        .minLength(8)
-                        .maxLength(14)
-                        .build(),
                   ),
                   SizedBox(height: 10.0),
                   getTextFormField(

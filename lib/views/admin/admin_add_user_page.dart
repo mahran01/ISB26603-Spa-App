@@ -1,85 +1,75 @@
 import 'package:flutter/material.dart';
-import 'package:form_validator/form_validator.dart';
 import 'package:provider/provider.dart';
-import 'package:spa_app/components/get_textformfield.dart';
+import 'package:form_validator/form_validator.dart';
+
 import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/components/spa_long_button.dart';
+import 'package:spa_app/components/get_textformfield.dart';
+import 'package:spa_app/config/routes/route_manager.dart';
 import 'package:spa_app/extensions/validator_extension.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';
-import 'package:spa_app/views/user/bottom_navigation.dart';
-import 'package:spa_app/views/user/setting.dart';
 
-class UpdateProfile extends StatefulWidget {
-  const UpdateProfile({super.key});
+class AdminAddUserPage extends StatefulWidget {
+  const AdminAddUserPage({super.key});
 
   @override
-  State<UpdateProfile> createState() => _UpdateProfileState();
+  State<AdminAddUserPage> createState() => _AdminAddUserPageState();
 }
 
-class _UpdateProfileState extends State<UpdateProfile> {
+class _AdminAddUserPageState extends State<AdminAddUserPage> {
   final _formKey = GlobalKey<FormState>();
 
-  late User user = context.read<UserService>().getCurrentUser!;
-  final TextEditingController _conName = TextEditingController();
-  final TextEditingController _conEmail = TextEditingController();
-  final TextEditingController _conPhone = TextEditingController();
-  final TextEditingController _conUsername = TextEditingController();
-  final TextEditingController _conPassword = TextEditingController();
+  final _conName = TextEditingController();
+  final _conEmail = TextEditingController();
+  final _conPhone = TextEditingController();
+  final _conUsername = TextEditingController();
+  final _conPassword = TextEditingController();
+  final _conCPassword = TextEditingController();
 
-  update() async {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  signUp() async {
     if (_formKey.currentState!.validate()) {
       String name = _conName.text;
       String email = _conEmail.text;
       String phone = _conPhone.text;
       String username = _conUsername.text;
       String password = _conPassword.text;
+      String cpassword = _conCPassword.text;
 
-      User newUser = User(
-        userid: user.userid,
+      User user = User(
+        userid: 0,
         name: name,
         email: email,
         phone: int.parse(phone),
         username: username,
         password: password,
       );
-      await context.read<UserService>().update(newUser).then((result) {
-        if (result != "OK") {
-          showSnackBar(context, result);
-        } else {
-          showSnackBar(context, "Successfully updated");
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const BottomNavigation(initialIndex: 2),
-            ),
-          );
-        }
-      });
-    } else {
-      print("HELLO!");
+      if (password != cpassword) {
+        (context, 'Password Mismatch');
+      } else {
+        _formKey.currentState?.save();
+        await context.read<UserService>().register(user).then((result) {
+          if (result != "OK") {
+            showSnackBar(context, result);
+          } else {
+            showSnackBar(context, "Successfully register");
+            RouteManager.login(context);
+          }
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    String userid, name, email, phone, username, password;
-    userid = user.userid.toString();
-    name = user.name;
-    email = user.email;
-    phone = user.phone.toString();
-    username = user.username;
-    password = user.password;
-
-    _conName.text = name;
-    _conEmail.text = email;
-    _conPhone.text = phone;
-    _conUsername.text = username;
-    _conPassword.text = password;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update Profile'),
+        title: Text('Add a new User'),
       ),
       body: Form(
         key: _formKey,
@@ -90,16 +80,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 20),
-                  Container(
-                    height: 190,
-                    width: 190,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage("images/profleimage.png"),
-                          fit: BoxFit.contain),
-                    ),
-                  ),
                   SizedBox(height: 10.0),
                   getTextFormField(
                     controller: _conName,
@@ -152,12 +132,18 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     isObscureText: true,
                     validator: ValidationBuilder().password().build(),
                   ),
+                  SizedBox(height: 10.0),
+                  getTextFormField(
+                    controller: _conCPassword,
+                    icon: Icons.lock,
+                    hintName: 'Confirm Password',
+                    isObscureText: true,
+                  ),
                   SizedBox(height: 20.0),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 50),
-                    child: SpaLongButton(onTap: update, text: "Update Profile"),
+                    child: SpaLongButton(onTap: signUp, text: "Create User"),
                   ),
-                  SizedBox(height: 10),
                 ],
               ),
             ),

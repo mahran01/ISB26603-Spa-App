@@ -19,7 +19,8 @@ class DBHelper {
     const dateType = 'DATE NOT NULL';
     const timeType = 'TIME NOT NULL';
 
-    await db.execute('''CREATE TABLE $userTable (
+    await db.execute(
+        '''CREATE TABLE $userTable (
         ${UserFields.userid} $intPrimaryType,
         ${UserFields.name} $textType,
         ${UserFields.email} $textType,
@@ -28,7 +29,8 @@ class DBHelper {
         ${UserFields.password} $textType
       )''');
 
-    await db.execute('''CREATE TABLE $facialbookTable (
+    await db.execute(
+        '''CREATE TABLE $facialbookTable (
         ${FacialbookFields.bookid} $intPrimaryType,
         ${FacialbookFields.userid} $intType,
         ${FacialbookFields.appointmentDate} $dateType,
@@ -37,7 +39,8 @@ class DBHelper {
         FOREIGN KEY (${UserFields.userid}) REFERENCES $userTable (${UserFields.userid})
       )''');
 
-    await db.execute('''CREATE TABLE $adminTable (
+    await db.execute(
+        '''CREATE TABLE $adminTable (
         ${AdminFields.adminid} $intPrimaryType,
         ${AdminFields.username} $textUniqueType,
         ${AdminFields.password} $textType
@@ -213,17 +216,28 @@ class DBHelper {
     return 0;
   }
 
+  Future<int> deleteBookOfUser(int userid) async {
+    final db = await instance.database;
+    return db!.delete(
+      facialbookTable,
+      where: '${FacialbookFields.userid} = ?',
+      whereArgs: [userid],
+    );
+  }
+
   /// Method to delete user base on userid.
   /// Use:-
   /// Admin delete user
   /// User request acc deletion
-  Future<int> deleteUser(int userid) async {
+  Future<int> deleteUserAndBook(int userid) async {
     final db = await instance.database;
-    return db!.delete(
-      userTable,
-      where: '${UserFields.userid} = ?',
-      whereArgs: [userid],
-    );
+    return await deleteBookOfUser(userid).then((result) {
+      return db!.delete(
+        userTable,
+        where: '${UserFields.userid} = ?',
+        whereArgs: [userid],
+      );
+    });
   }
 
   /// Method to create facialbook.
