@@ -4,6 +4,9 @@ import 'package:spa_app/components/get_textformfield.dart';
 import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/components/spa_long_button.dart';
 import 'package:spa_app/config/routes/route_manager.dart';
+import 'package:spa_app/models/facialbook.dart';
+import 'package:spa_app/models/user.dart';
+import 'package:spa_app/services/facialbook_service.dart';
 import 'package:spa_app/services/user_service.dart';
 
 class LoginPage extends StatefulWidget {
@@ -29,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
       await context
           .read<UserService>()
           .login(_conUsername.text.trim(), _conPassword.text)
-          .then((result) {
+          .then((result) async {
         if (result != 'OK') {
           showSnackBar(context, result);
           return;
@@ -38,7 +41,18 @@ class _LoginPageState extends State<LoginPage> {
               context.read<UserService>().getCurrentAccountType;
           switch (accountType) {
             case AccountType.user:
-              RouteManager.userHome(context);
+              User user = context.read<UserService>().getCurrentUser!;
+              await context
+                  .read<FacialBookService>()
+                  .bindUserFacialbook(user.userid)
+                  .then((value) {
+                if (value != 'OK') {
+                  showSnackBar(context, value);
+                  return;
+                } else {
+                  RouteManager.userHome(context);
+                }
+              });
               break;
             case AccountType.admin:
               RouteManager.adminHome(context);

@@ -43,7 +43,7 @@ class Facialbook {
     );
   }
 
-  static _toStringTime(TimeOfDay tod) =>
+  static String _toStringTime(TimeOfDay tod) =>
       "${tod.hour.toString().padLeft(2, '0')}:${tod.minute.toString().padLeft(2, '0')}";
 
   Map<String, Object?> toJson() => {
@@ -59,13 +59,15 @@ class Facialbook {
         minute: int.parse(s.split(":")[1]),
       );
 
-  static Facialbook fromJson(Map<String, Object?> json) => Facialbook(
-        bookid: json[FacialbookFields.bookid] as int,
-        userid: json[FacialbookFields.userid] as int,
-        appointmentDate:
-            DateTime.parse(json[FacialbookFields.appointmentDate] as String),
-        appointmentTime:
-            _stringToTimeOfDay([FacialbookFields.appointmentTime] as String),
-        services: json[FacialbookFields.services] as String,
-      );
+  static Facialbook fromJson(Map<String, Object?> json) {
+    return Facialbook(
+      bookid: json[FacialbookFields.bookid] as int,
+      userid: json[FacialbookFields.userid] as int,
+      appointmentDate:
+          DateTime.parse(json[FacialbookFields.appointmentDate] as String),
+      appointmentTime:
+          _stringToTimeOfDay(json[FacialbookFields.appointmentTime] as String),
+      services: json[FacialbookFields.services].toString(),
+    );
+  }
 }

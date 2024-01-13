@@ -4,16 +4,36 @@ import 'package:spa_app/models/facialbook.dart';
 import 'package:spa_app/models/user.dart';
 
 class FacialBookService with ChangeNotifier {
-  late List<Facialbook> _facialbookList;
+  List<Facialbook>? _facialbookList;
 
-  get getFacialBookList => _facialbookList;
+  List<Facialbook>? get getFacialBookList => _facialbookList;
 
   Future<String> makeAppointment(Facialbook fb) async {
     DBHelper db = DBHelper.instance;
     String result = "OK";
     try {
-      await db.createFacialbook(fb);
-      notifyListeners();
+      if (_facialbookList != null) {
+        await db.createFacialbook(fb).then(
+          (v) {
+            _facialbookList!.add(fb);
+            _facialbookList!.sort((a, b) {
+              DateTime aDate = a.appointmentDate;
+              DateTime bDate = b.appointmentDate;
+              bool n = bDate.isBefore(aDate);
+              if (!aDate.isAtSameMomentAs(bDate)) {
+                return n ? -1 : 1;
+              }
+              print("HEELOOOOO!");
+              TimeOfDay aTime = a.appointmentTime;
+              TimeOfDay bTime = b.appointmentTime;
+              return bTime.hour - aTime.hour;
+            });
+          },
+        );
+        notifyListeners();
+      } else {
+        throw Exception("Facialbook List is not bind.");
+      }
     } catch (e) {
       result = getHumanReadableError(e.toString());
     }
@@ -24,7 +44,18 @@ class FacialBookService with ChangeNotifier {
     DBHelper db = DBHelper.instance;
     String result = "OK";
     try {
-      await db.getFacialbook(userid).then((value) => _facialbookList = value);
+      _facialbookList = await db.getFacialbook(userid);
+    } catch (e) {
+      result = getHumanReadableError(e.toString());
+    }
+    return result;
+  }
+
+  Future<String> bindAllFacialbook(int userid) async {
+    DBHelper db = DBHelper.instance;
+    String result = "OK";
+    try {
+      _facialbookList = await db.getAllFacialbook();
     } catch (e) {
       result = getHumanReadableError(e.toString());
     }

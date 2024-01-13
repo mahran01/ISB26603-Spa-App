@@ -252,6 +252,19 @@ class DBHelper {
     return result.map((e) => Facialbook.fromJson(e)).toList();
   }
 
+  // Method to get all facialbook.
+  // Use:-
+  // Display for admin
+  Future<List<Facialbook>> getAllFacialbook() async {
+    final db = await instance.database;
+    final result = await db!.query(
+      facialbookTable,
+      orderBy:
+          '${FacialbookFields.appointmentDate} DESC, ${FacialbookFields.appointmentTime} DESC',
+    );
+    return result.map((e) => Facialbook.fromJson(e)).toList();
+  }
+
   /// Mehtod to delete facial book.
   /// Use:-
   /// Delete invalid/concelled facialbook

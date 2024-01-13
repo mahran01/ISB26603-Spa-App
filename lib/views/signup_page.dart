@@ -6,6 +6,7 @@ import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/components/spa_long_button.dart';
 import 'package:spa_app/components/get_textformfield.dart';
 import 'package:spa_app/config/routes/route_manager.dart';
+import 'package:spa_app/extensions/validator_extension.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';
 
@@ -163,36 +164,6 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-extension on ValidationBuilder {
-  ValidationBuilder username() {
-    return regExp(
-        RegExp(r'^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$'),
-        "Between 8-20 characters long");
-  }
-
-  ValidationBuilder password() {
-    return regExp(
-      RegExp(
-          r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'),
-      "Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character",
-    );
-  }
-
-  ValidationBuilder name() {
-    return regExp(
-      RegExp(r"^\s*([A-Za-z]{1,}([\.,] |[-']| @ | ))*[A-Za-z]+\.?\s*$"),
-      "",
-    );
-  }
-
-  ValidationBuilder numeric() {
-    return regExp(
-      RegExp(r"^([0-9]*)$"),
-      "Should only contains [0-9]",
     );
   }
 }

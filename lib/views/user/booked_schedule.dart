@@ -1,10 +1,27 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:path/path.dart';
+import 'package:provider/provider.dart';
+import 'package:spa_app/components/schedule_card.dart';
+import 'package:spa_app/data_repository/db_helper.dart';
+import 'package:spa_app/models/facialbook.dart';
+import 'package:spa_app/models/user.dart';
+import 'package:spa_app/services/facialbook_service.dart';
+import 'package:spa_app/services/user_service.dart';
 
 class SchedulePage extends StatelessWidget {
   const SchedulePage({super.key});
 
+  update() {}
+
+  delete() {}
+
   @override
   Widget build(BuildContext context) {
+    List<Facialbook> fb =
+        context.read<FacialBookService>().getFacialBookList ?? [];
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Schedule'),
@@ -14,152 +31,31 @@ class SchedulePage extends StatelessWidget {
         child: Padding(
           padding:
               const EdgeInsets.only(top: 30, bottom: 30, left: 10, right: 10),
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 5),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 4,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                children: [
-                  ListTile(
-                    title: Text(
-                      "Dr. Doctor Name",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    subtitle: Text("Therapist"),
-                    trailing: CircleAvatar(
-                      radius: 25,
-                      backgroundImage: AssetImage("images/profleimage.png"),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Divider(
-                      // color: Colors.black,
-                      thickness: 1,
-                      height: 20,
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_month,
-                            color: Colors.black54,
-                          ),
-                          SizedBox(width: 5),
-                          Text(
-                            "12/01/2023",
-                            style: TextStyle(
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.access_time_filled,
-                            color: Colors.black54,
-                          ),
-                          SizedBox(width: 5),
-                          Text(
-                            "10:30 AM",
-                            style: TextStyle(
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          SizedBox(width: 5),
-                          Text(
-                            "Confirmed",
-                            style: TextStyle(
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 15),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          width: 150,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Color(0xFFF4F6FA),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Center(
-                            child: Text(
-                              "Cancel",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          width: 150,
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Color(0xFF7165D6),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Center(
-                            child: Text(
-                              "Reschedule",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                ],
-              ),
-            ),
+          child: ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: fb.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ScheduleCard(
+                services: decode(fb[index].services),
+                date: DateFormat.yMMMd().format(fb[index].appointmentDate),
+                time: timeToString(fb[index].appointmentTime),
+                update: () {},
+                delete: () {},
+              );
+            },
           ),
         ),
       ),
     );
+  }
+
+  String decode(String json) {
+    String listString = jsonDecode("[$json]").toString();
+    return listString.substring(1, listString.length - 1);
+  }
+
+  String timeToString(TimeOfDay tod) {
+    return "${tod.hourOfPeriod.toString().padLeft(2, "0")}:${tod.minute.toString().padLeft(2, "0")} ${tod.hour < 12 ? "am" : "pm"}";
   }
 }

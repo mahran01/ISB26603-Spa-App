@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:form_validator/form_validator.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_app/components/get_textformfield.dart';
 import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/components/spa_long_button.dart';
+import 'package:spa_app/extensions/validator_extension.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';
 import 'package:spa_app/views/user/bottom_navigation.dart';
@@ -16,7 +18,7 @@ class UpdateProfile extends StatefulWidget {
 }
 
 class _UpdateProfileState extends State<UpdateProfile> {
-  final _formKey = new GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   late User user = context.read<UserService>().getCurrentUser!;
   final TextEditingController _conName = TextEditingController();
@@ -26,26 +28,37 @@ class _UpdateProfileState extends State<UpdateProfile> {
   final TextEditingController _conPassword = TextEditingController();
 
   update() async {
-    User newUser = User(
-      userid: user.userid,
-      name: _conName.text,
-      email: _conEmail.text,
-      phone: int.parse(_conPhone.text),
-      username: _conUsername.text,
-      password: _conPassword.text,
-    );
-    await context.read<UserService>().update(newUser).then((result) {
-      if (result != "OK")
-        showSnackBar(context, result);
-      else
-        showSnackBar(context, "Successfully updated");
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const BottomNavigation(initialIndex: 2),
-        ),
+    if (_formKey.currentState!.validate()) {
+      String name = _conName.text;
+      String email = _conEmail.text;
+      String phone = _conPhone.text;
+      String username = _conUsername.text;
+      String password = _conPassword.text;
+
+      User newUser = User(
+        userid: 0,
+        name: name,
+        email: email,
+        phone: int.parse(phone),
+        username: username,
+        password: password,
       );
-    });
+      await context.read<UserService>().update(newUser).then((result) {
+        if (result != "OK") {
+          showSnackBar(context, result);
+        } else {
+          showSnackBar(context, "Successfully updated");
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const BottomNavigation(initialIndex: 2),
+            ),
+          );
+        }
+      });
+    } else {
+      print("HELLO!");
+    }
   }
 
   @override
@@ -68,61 +81,85 @@ class _UpdateProfileState extends State<UpdateProfile> {
       appBar: AppBar(
         title: Text('Update Profile'),
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Container(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: 20),
-                Container(
-                  height: 190,
-                  width: 190,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage("images/profleimage.png"),
-                        fit: BoxFit.contain),
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: 20),
+                  Container(
+                    height: 190,
+                    width: 190,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage("images/profleimage.png"),
+                          fit: BoxFit.contain),
+                    ),
                   ),
-                ),
-                SizedBox(height: 10.0),
-                getTextFormField(
-                  controller: _conName,
-                  icon: Icons.person_outline,
-                  hintName: 'Full Name',
-                ),
-                SizedBox(height: 10.0),
-                getTextFormField(
-                  controller: _conEmail,
-                  icon: Icons.email,
-                  hintName: 'Email',
-                ),
-                SizedBox(height: 10.0),
-                getTextFormField(
-                  controller: _conPhone,
-                  icon: Icons.phone,
-                  hintName: 'Phone Number',
-                ),
-                SizedBox(height: 10.0),
-                getTextFormField(
-                  controller: _conUsername,
-                  icon: Icons.person_3,
-                  hintName: 'Username',
-                ),
-                SizedBox(height: 10.0),
-                getTextFormField(
-                  controller: _conPassword,
-                  icon: Icons.lock,
-                  hintName: 'Password',
-                  isObscureText: true,
-                ),
-                SizedBox(height: 20.0),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 50),
-                  child: SpaLongButton(onTap: update, text: "Update Profile"),
-                ),
-                SizedBox(height: 10),
-              ],
+                  SizedBox(height: 10.0),
+                  getTextFormField(
+                    controller: _conName,
+                    icon: Icons.person_outline,
+                    inputType: TextInputType.name,
+                    hintName: 'Full Name',
+                    validator: ValidationBuilder()
+                        .name()
+                        .minLength(5)
+                        .maxLength(100)
+                        .build(),
+                  ),
+                  SizedBox(height: 10.0),
+                  getTextFormField(
+                    controller: _conEmail,
+                    icon: Icons.email,
+                    inputType: TextInputType.emailAddress,
+                    hintName: 'Email',
+                    validator: ValidationBuilder()
+                        .email()
+                        .minLength(5)
+                        .maxLength(100)
+                        .build(),
+                  ),
+                  SizedBox(height: 10.0),
+                  getTextFormField(
+                    controller: _conPhone,
+                    icon: Icons.phone,
+                    inputType: TextInputType.name,
+                    hintName: 'Phone Number',
+                    validator: ValidationBuilder()
+                        .numeric()
+                        .minLength(8)
+                        .maxLength(14)
+                        .build(),
+                  ),
+                  SizedBox(height: 10.0),
+                  getTextFormField(
+                    controller: _conUsername,
+                    icon: Icons.person_3,
+                    inputType: TextInputType.name,
+                    hintName: 'Username',
+                    validator: ValidationBuilder().username().build(),
+                  ),
+                  SizedBox(height: 10.0),
+                  getTextFormField(
+                    controller: _conPassword,
+                    icon: Icons.lock,
+                    hintName: 'Password',
+                    isObscureText: true,
+                    validator: ValidationBuilder().password().build(),
+                  ),
+                  SizedBox(height: 20.0),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 50),
+                    child: SpaLongButton(onTap: update, text: "Update Profile"),
+                  ),
+                  SizedBox(height: 10),
+                ],
+              ),
             ),
           ),
         ),
