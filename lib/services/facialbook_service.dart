@@ -62,6 +62,10 @@ class FacialBookService with ChangeNotifier {
     return result;
   }
 
+  unbind() {
+    _facialbookList = null;
+  }
+
   Future<String> updateFacialBook(Facialbook fb) async {
     DBHelper db = DBHelper.instance;
     String result = "OK";

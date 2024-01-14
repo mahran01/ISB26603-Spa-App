@@ -18,7 +18,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   // 8
   static List<Widget> pages = <Widget>[
-    const Home(),
+    Home(gotoPage: null),
     const SchedulePage(),
     const Setting(),
   ];
@@ -32,6 +32,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
 
   @override
   void initState() {
+    pages[0] = Home(gotoPage: _onItemTapped);
     _selectedIndex = widget.initialIndex;
     super.initState();
   }

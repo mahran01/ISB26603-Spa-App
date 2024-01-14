@@ -11,7 +11,9 @@ import 'package:spa_app/views/login_page.dart';
 import 'package:spa_app/views/user/booking_page.dart';
 
 class Home extends StatelessWidget {
-  const Home({super.key});
+  const Home({super.key, this.gotoPage});
+
+  final void Function(int)? gotoPage;
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +45,11 @@ class Home extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     facial_Decoration(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => BookingPage(),
-                          ),
-                        );
-                      },
+                      onTap: () => RouteManager.booking(
+                        context,
+                        onComplete: () =>
+                            gotoPage != null ? gotoPage!(1) : null,
+                      ),
                       text1: "Facial Treatment",
                       text2: "Book an appointment",
                       icon: Icons.add,
@@ -61,7 +60,7 @@ class Home extends StatelessWidget {
                       width: maxWidth / 2 - 15,
                     ),
                     facial_Decoration(
-                      onTap: () {},
+                      onTap: () => gotoPage != null ? gotoPage!(2) : null,
                       text1: "Hello",
                       text2: name,
                       icon: Icons.person,

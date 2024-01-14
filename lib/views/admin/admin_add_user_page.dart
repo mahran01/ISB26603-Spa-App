@@ -5,13 +5,14 @@ import 'package:form_validator/form_validator.dart';
 import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/components/spa_long_button.dart';
 import 'package:spa_app/components/get_textformfield.dart';
-import 'package:spa_app/config/routes/route_manager.dart';
-import 'package:spa_app/extensions/validator_extension.dart';
+import 'package:spa_app/functions/validator_extension.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';
 
 class AdminAddUserPage extends StatefulWidget {
-  const AdminAddUserPage({super.key});
+  const AdminAddUserPage({super.key, this.onComplete});
+
+  final void Function()? onComplete;
 
   @override
   State<AdminAddUserPage> createState() => _AdminAddUserPageState();
@@ -32,7 +33,7 @@ class _AdminAddUserPageState extends State<AdminAddUserPage> {
     super.initState();
   }
 
-  signUp() async {
+  createUser() async {
     if (_formKey.currentState!.validate()) {
       String name = _conName.text;
       String email = _conEmail.text;
@@ -53,12 +54,13 @@ class _AdminAddUserPageState extends State<AdminAddUserPage> {
         (context, 'Password Mismatch');
       } else {
         _formKey.currentState?.save();
-        await context.read<UserService>().register(user).then((result) {
+        await context.read<UserService>().registerAsAdmin(user).then((result) {
           if (result != "OK") {
             showSnackBar(context, result);
           } else {
-            showSnackBar(context, "Successfully register");
-            RouteManager.login(context);
+            if (widget.onComplete != null) widget.onComplete!();
+            Navigator.pop(context, "OK");
+            showSnackBar(context, "Successfully created");
           }
         });
       }
@@ -80,6 +82,16 @@ class _AdminAddUserPageState extends State<AdminAddUserPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(height: 20),
+                  Container(
+                    height: 190,
+                    width: 190,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage("images/profleimage.png"),
+                          fit: BoxFit.contain),
+                    ),
+                  ),
                   SizedBox(height: 10.0),
                   getTextFormField(
                     controller: _conName,
@@ -88,7 +100,7 @@ class _AdminAddUserPageState extends State<AdminAddUserPage> {
                     hintName: 'Full Name',
                     validator: ValidationBuilder()
                         .name()
-                        .minLength(5)
+                        .minLength(1)
                         .maxLength(100)
                         .build(),
                   ),
@@ -100,7 +112,7 @@ class _AdminAddUserPageState extends State<AdminAddUserPage> {
                     hintName: 'Email',
                     validator: ValidationBuilder()
                         .email()
-                        .minLength(5)
+                        .minLength(1)
                         .maxLength(100)
                         .build(),
                   ),
@@ -110,11 +122,7 @@ class _AdminAddUserPageState extends State<AdminAddUserPage> {
                     icon: Icons.phone,
                     inputType: TextInputType.name,
                     hintName: 'Phone Number',
-                    validator: ValidationBuilder()
-                        .numeric()
-                        .minLength(8)
-                        .maxLength(14)
-                        .build(),
+                    validator: ValidationBuilder().myPhone().build(),
                   ),
                   SizedBox(height: 10.0),
                   getTextFormField(
@@ -137,12 +145,22 @@ class _AdminAddUserPageState extends State<AdminAddUserPage> {
                     controller: _conCPassword,
                     icon: Icons.lock,
                     hintName: 'Confirm Password',
+                    validator: (value) {
+                      if (value == "") {
+                        return "The field is required";
+                      }
+                      if (value != _conPassword.text) {
+                        return "Password does not match";
+                      }
+                      return null;
+                    },
                     isObscureText: true,
                   ),
                   SizedBox(height: 20.0),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 50),
-                    child: SpaLongButton(onTap: signUp, text: "Create User"),
+                    child:
+                        SpaLongButton(onTap: createUser, text: "Create User"),
                   ),
                 ],
               ),
