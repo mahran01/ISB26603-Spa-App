@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:spa_app/components/get_textformfield.dart';
 import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/components/spa_long_button.dart';
-import 'package:spa_app/extensions/validator_extension.dart';
+import 'package:spa_app/functions/validator_extension.dart';
 import 'package:spa_app/models/admin.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';
@@ -40,12 +40,7 @@ class _AdminUpdateProfilePageState extends State<AdminUpdateProfilePage> {
           showSnackBar(context, result);
         } else {
           showSnackBar(context, "Successfully updated");
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const BottomNavigation(initialIndex: 2),
-            ),
-          );
+          Navigator.pop(context, "OK");
         }
       });
     }

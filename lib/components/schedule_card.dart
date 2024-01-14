@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ScheduleCard extends StatelessWidget {
-  final String bookid;
+  final String title;
   final String services;
   final String date;
   final String time;
@@ -10,12 +10,12 @@ class ScheduleCard extends StatelessWidget {
 
   const ScheduleCard({
     super.key,
-    required this.bookid,
+    this.title = "Services",
     required this.services,
     required this.date,
     required this.time,
-    required this.update,
-    required this.delete,
+    this.update,
+    this.delete,
   });
 
   @override
@@ -43,7 +43,7 @@ class ScheduleCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  "Services#$bookid",
+                  title,
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
@@ -102,48 +102,52 @@ class ScheduleCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  InkWell(
-                    onTap: update,
-                    child: Container(
-                      width: 150,
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Color(0xFFF4F6FA),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Update",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black54,
+                  update == null
+                      ? const SizedBox(width: 150)
+                      : InkWell(
+                          onTap: update,
+                          child: Container(
+                            width: 150,
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Color(0xFFF4F6FA),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Update",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: delete,
-                    child: Container(
-                      width: 150,
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Color(0xFF7165D6),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Delete",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
+                  delete == null
+                      ? const SizedBox(width: 150)
+                      : InkWell(
+                          onTap: delete,
+                          child: Container(
+                            width: 150,
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Color(0xFF7165D6),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Delete",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
               SizedBox(height: 10),

@@ -10,13 +10,13 @@ enum AccountType { user, admin }
 class UserService with ChangeNotifier {
   late User? _currentUser;
   late Admin? _currentAdmin;
-  late AccountType _currentAccountType;
+  late AccountType? _currentAccountType;
   late List<User>? _allUser;
   bool _userExists = false;
 
   User? get getCurrentUser => _currentUser;
   Admin? get getCurrentAdmin => _currentAdmin;
-  AccountType get getCurrentAccountType => _currentAccountType;
+  AccountType? get getCurrentAccountType => _currentAccountType;
   List<User>? get getAlUser => _allUser;
   bool get getUserExists => _userExists;
 
@@ -63,10 +63,28 @@ class UserService with ChangeNotifier {
     return result;
   }
 
+  logout() {
+    _currentUser = null;
+    _currentAdmin = null;
+    _currentAccountType = null;
+  }
+
   Future<String> register(Account account) async {
     String result = "OK";
     try {
       await DBHelper.instance.createUser(account);
+      notifyListeners();
+    } catch (e) {
+      result = getHumanReadableError(e.toString());
+    }
+    return result;
+  }
+
+  Future<String> registerAsAdmin(Account account) async {
+    String result = "OK";
+    try {
+      await DBHelper.instance.createUser(account);
+      _allUser!.add(account as User);
       notifyListeners();
     } catch (e) {
       result = getHumanReadableError(e.toString());
@@ -83,9 +101,17 @@ class UserService with ChangeNotifier {
         await db.updateUser(account).then((e) {
           if (_currentAccountType == AccountType.user) {
             _currentUser = account;
+            _currentAdmin = null;
+          } else if (_currentAccountType == AccountType.admin) {
+            User userAddress =
+                _allUser!.firstWhere((e) => e.userid == account.userid);
+            userAddress.name = account.name;
+            userAddress.email = account.email;
+            userAddress.phone = account.phone;
+            userAddress.username = account.username;
+            userAddress.password = account.password;
           }
         });
-        _currentAdmin = null;
       } else if (account is Admin) {
         await db.updateAdmin(account);
         if (_currentAccountType == AccountType.admin) {
@@ -122,11 +148,14 @@ class UserService with ChangeNotifier {
 }
 
 String getHumanReadableError(String message) {
-  // if (message.contains('UNIQUE constraint failed')) {
-  //   return 'Username is not available.';
-  // }
-  // if (message.contains('not found in the database')) {
-  //   return 'Username is not registered.';
-  // }
+  if (message.contains('UNIQUE constraint failed')) {
+    return 'Username is not available.';
+  }
+  if (message.contains('not found in the database')) {
+    return 'Username is not registered.';
+  }
+  if (message.contains('already exist')) {
+    return 'Username already registered.';
+  }
   return message;
 }

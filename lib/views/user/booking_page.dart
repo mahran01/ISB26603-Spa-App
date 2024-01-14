@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_app/data_repository/assign_value.dart';
 import 'package:spa_app/models/treatment.dart';
-import 'package:spa_app/views/user/bottom_navigation.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/models/facialbook.dart';
 import 'package:spa_app/services/facialbook_service.dart';
 import 'package:spa_app/services/user_service.dart';
+import 'package:spa_app/functions/shared.dart';
 
 class BookingPage extends StatefulWidget {
-  const BookingPage({super.key, this.selectedIndex});
+  const BookingPage({super.key, this.selectedIndex, this.onComplete});
 
   final int? selectedIndex;
+  final void Function()? onComplete;
   @override
   State<BookingPage> createState() => _BookingPageState();
 }
@@ -88,9 +89,6 @@ class _BookingPageState extends State<BookingPage> {
       ),
     );
   }
-
-  DateTime combineDateTime(DateTime dt, TimeOfDay tod) =>
-      DateTime(dt.year, dt.month, dt.day, tod.hour, tod.minute);
 
   void showSpaBottomSheet(ThemeData theme) {
     showModalBottomSheet(
@@ -239,6 +237,7 @@ class _BookingPageState extends State<BookingPage> {
     for (String e in services) {
       serviceString += serviceString == "" ? e : ",$e";
     }
+    serviceString = "[$serviceString]";
 
     Facialbook fb = Facialbook(
       bookid: 0,
@@ -259,12 +258,8 @@ class _BookingPageState extends State<BookingPage> {
             .read<FacialBookService>()
             .bindUserFacialbook(userid)
             .then((value) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const BottomNavigation(initialIndex: 1),
-            ),
-          );
+          if (widget.onComplete != null) widget.onComplete!();
+          Navigator.pop(context);
           showSnackBar(context, "Added successsfully");
         });
       }

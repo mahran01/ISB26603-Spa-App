@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
           return;
         } else {
           AccountType accountType =
-              context.read<UserService>().getCurrentAccountType;
+              context.read<UserService>().getCurrentAccountType!;
           switch (accountType) {
             case AccountType.user:
               if (context.mounted) {
@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
                     showSnackBar(context, value);
                     return;
                   } else {
-                    RouteManager.userHome(context);
+                    RouteManager.userHome(context, replace: true);
                   }
                 });
               }
@@ -65,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
                     showSnackBar(context, value);
                     return;
                   } else {
-                    RouteManager.adminHome(context);
+                    RouteManager.adminHome(context, replace: true);
                   }
                 });
               }

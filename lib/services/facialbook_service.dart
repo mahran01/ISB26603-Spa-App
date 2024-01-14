@@ -62,6 +62,10 @@ class FacialBookService with ChangeNotifier {
     return result;
   }
 
+  unbind() {
+    _facialbookList = null;
+  }
+
   Future<String> deleteFacialBook(int bookid) async {
     DBHelper db = DBHelper.instance;
     String result = "OK";

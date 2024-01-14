@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_app/components/table_profile.dart';
+import 'package:spa_app/config/routes/route_manager.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';
 import 'package:spa_app/views/user/update_profile.dart';
@@ -87,14 +88,7 @@ class Setting extends StatelessWidget {
             ),
             Divider(height: 40),
             ListTile(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const WelcomePage(),
-                  ),
-                );
-              },
+              onTap: () => RouteManager.logout(context),
               leading: Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(

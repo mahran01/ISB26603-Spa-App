@@ -3,8 +3,8 @@ import 'package:form_validator/form_validator.dart';
 extension ValidatorExtension on ValidationBuilder {
   ValidationBuilder username() {
     return regExp(
-        RegExp(r'^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$'),
-        "Between 8-20 characters long");
+        RegExp(r'^(?=[a-zA-Z0-9._]{6,20}$)(?!.*[_.]{2})[^_.].*[^_.]$'),
+        "Between 6-20 characters long");
   }
 
   ValidationBuilder password() {
@@ -18,7 +18,14 @@ extension ValidatorExtension on ValidationBuilder {
   ValidationBuilder name() {
     return regExp(
       RegExp(r"^\s*([A-Za-z]{1,}([\.,] |[-']| @ | ))*[A-Za-z]+\.?\s*$"),
-      "",
+      "Must be valid name",
+    );
+  }
+
+  ValidationBuilder myPhone() {
+    return regExp(
+      RegExp(r"^(0{0,1}([1-9][0-9]{8,9}))$"),
+      "Phone number formatting, eg: 0123456789",
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spa_app/views/admin/admin_home_page.dart';
+import 'package:spa_app/views/admin/admin_schedule_page.dart';
 import 'package:spa_app/views/admin/admin_settings_page.dart';
 import 'package:spa_app/views/user/booked_schedule.dart';
 import 'package:spa_app/views/user/home.dart';
@@ -20,7 +21,7 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
   // 8
   static List<Widget> pages = <Widget>[
     const AdminHomePage(),
-    const SchedulePage(),
+    const AdminSchedulePage(),
     const AdminSettingsPage(),
   ];
 
@@ -33,6 +34,7 @@ class _AdminBottomNavState extends State<AdminBottomNav> {
 
   @override
   void initState() {
+    pages[0] = AdminHomePage(gotoPage: _onItemTapped);
     _selectedIndex = widget.initialIndex;
     super.initState();
   }

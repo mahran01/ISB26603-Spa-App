@@ -4,12 +4,18 @@ import 'package:spa_app/components/table_profile.dart';
 import 'package:spa_app/config/routes/route_manager.dart';
 import 'package:spa_app/models/admin.dart';
 import 'package:spa_app/services/user_service.dart';
+import 'package:spa_app/views/admin/admin_update_profile_page.dart';
 import 'package:spa_app/views/user/update_profile.dart';
 import 'package:spa_app/views/welcome_page.dart';
 
-class AdminSettingsPage extends StatelessWidget {
+class AdminSettingsPage extends StatefulWidget {
   const AdminSettingsPage({super.key});
 
+  @override
+  State<AdminSettingsPage> createState() => _AdminSettingsPageState();
+}
+
+class _AdminSettingsPageState extends State<AdminSettingsPage> {
   @override
   Widget build(BuildContext context) {
     Admin admin = context.read<UserService>().getCurrentAdmin!;
@@ -52,7 +58,19 @@ class AdminSettingsPage extends StatelessWidget {
             ),
             Divider(height: 40),
             ListTile(
-              onTap: () => RouteManager.adminUpdateProfile(context),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        const AdminUpdateProfilePage(),
+                  ),
+                ).then((result) {
+                  if (result == "OK") {
+                    setState(() {});
+                  }
+                });
+              },
               leading: Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
@@ -76,7 +94,7 @@ class AdminSettingsPage extends StatelessWidget {
             ),
             Divider(height: 40),
             ListTile(
-              onTap: () => RouteManager.welcome(context),
+              onTap: () => RouteManager.logout(context),
               leading: Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
