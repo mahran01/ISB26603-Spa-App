@@ -62,6 +62,20 @@ class FacialBookService with ChangeNotifier {
     return result;
   }
 
+  Future<String> updateFacialBook(Facialbook fb) async {
+    DBHelper db = DBHelper.instance;
+    String result = "OK";
+    try {
+      await db.updateFacialBook(fb).then((v) {
+        _facialbookList!.removeWhere((e) => e.bookid == fb.bookid);
+      });
+      notifyListeners();
+    } catch (e) {
+      result = getHumanReadableError(e.toString());
+    }
+    return result;
+  }
+
   Future<String> deleteFacialBook(int bookid) async {
     DBHelper db = DBHelper.instance;
     String result = "OK";

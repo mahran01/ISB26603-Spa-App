@@ -10,7 +10,7 @@ class ScheduleCard extends StatelessWidget {
 
   const ScheduleCard({
     super.key,
-    required this.bookid,
+    this.bookid = "",
     required this.services,
     required this.date,
     required this.time,

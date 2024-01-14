@@ -58,7 +58,6 @@ class _SchedulePageState extends State<SchedulePage> {
             itemCount: fb.length,
             itemBuilder: (BuildContext context, int index) {
               return ScheduleCard(
-                bookid: fb[index].bookid.toString(),
                 services: decode(fb[index].services),
                 date: DateFormat.yMMMd().format(fb[index].appointmentDate),
                 time: timeToString(fb[index].appointmentTime),

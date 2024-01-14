@@ -19,8 +19,7 @@ class DBHelper {
     const dateType = 'DATE NOT NULL';
     const timeType = 'TIME NOT NULL';
 
-    await db.execute(
-        '''CREATE TABLE $userTable (
+    await db.execute('''CREATE TABLE $userTable (
         ${UserFields.userid} $intPrimaryType,
         ${UserFields.name} $textType,
         ${UserFields.email} $textType,
@@ -29,8 +28,7 @@ class DBHelper {
         ${UserFields.password} $textType
       )''');
 
-    await db.execute(
-        '''CREATE TABLE $facialbookTable (
+    await db.execute('''CREATE TABLE $facialbookTable (
         ${FacialbookFields.bookid} $intPrimaryType,
         ${FacialbookFields.userid} $intType,
         ${FacialbookFields.appointmentDate} $dateType,
@@ -39,8 +37,7 @@ class DBHelper {
         FOREIGN KEY (${UserFields.userid}) REFERENCES $userTable (${UserFields.userid})
       )''');
 
-    await db.execute(
-        '''CREATE TABLE $adminTable (
+    await db.execute('''CREATE TABLE $adminTable (
         ${AdminFields.adminid} $intPrimaryType,
         ${AdminFields.username} $textUniqueType,
         ${AdminFields.password} $textType
@@ -277,6 +274,19 @@ class DBHelper {
           '${FacialbookFields.appointmentDate} DESC, ${FacialbookFields.appointmentTime} DESC',
     );
     return result.map((e) => Facialbook.fromJson(e)).toList();
+  }
+
+  /// Method to update facial book.
+  /// Use:-
+  /// Update for user
+  Future<int> updateFacialBook(Facialbook fb) async {
+    final db = await instance.database;
+    return db!.update(
+      facialbookTable,
+      fb.toJson(),
+      where: '${FacialbookFields.bookid} = ?',
+      whereArgs: [fb.bookid],
+    );
   }
 
   /// Mehtod to delete facial book.
