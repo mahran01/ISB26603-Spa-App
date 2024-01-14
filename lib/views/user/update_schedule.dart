@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_app/data_repository/assign_value.dart';
@@ -10,7 +12,9 @@ import 'package:spa_app/services/facialbook_service.dart';
 import 'package:spa_app/services/user_service.dart';
 
 class UpdateFacialBookPage extends StatefulWidget {
-  const UpdateFacialBookPage({super.key, this.selectedIndex});
+  const UpdateFacialBookPage({super.key, this.selectedIndex, required this.fb});
+
+  final Facialbook fb;
 
   final int? selectedIndex;
   @override
@@ -33,11 +37,24 @@ class _UpdateFacialBookPageState extends State<UpdateFacialBookPage> {
   List<bool> treatmentsChecked =
       List.filled(AssignValue.treatment.length, false);
 
+  late Facialbook fb;
+
   String? token; //get token for insert booking date and time into database
 
   @override
   void initState() {
     super.initState();
+    fb = widget.fb;
+    _currentDay = fb.appointmentDate;
+    _currentIndex = fb.appointmentTime.hour;
+    _dateSelected = true;
+    _timeSelected = true;
+    _isWeekend = false;
+    _btnDateTimeDisabled = false;
+    _btnServicesDisabled = false;
+    treatmentsChecked = treatments
+        .map((e) => (jsonDecode(fb.services).toString()).contains(e.name))
+        .toList();
     if (widget.selectedIndex != null) {
       treatmentsChecked[widget.selectedIndex!] = true;
     }
@@ -239,9 +256,10 @@ class _UpdateFacialBookPageState extends State<UpdateFacialBookPage> {
     for (String e in services) {
       serviceString += serviceString == "" ? e : ",$e";
     }
+    serviceString = "[$serviceString]";
 
     Facialbook fb = Facialbook(
-      bookid: 0,
+      bookid: this.fb.bookid,
       userid: userid,
       appointmentDate: datePicked,
       appointmentTime: timePicked,
@@ -250,7 +268,7 @@ class _UpdateFacialBookPageState extends State<UpdateFacialBookPage> {
 
     Navigator.pop(context);
 
-    await context.read<FacialBookService>().makeAppointment(fb).then((result) {
+    await context.read<FacialBookService>().updateFacialBook(fb).then((result) {
       if (result != 'OK') {
         showSnackBar(context, result);
         return;
@@ -265,7 +283,7 @@ class _UpdateFacialBookPageState extends State<UpdateFacialBookPage> {
               builder: (context) => const BottomNavigation(initialIndex: 1),
             ),
           );
-          showSnackBar(context, "Added successsfully");
+          showSnackBar(context, "Update successsfully");
         });
       }
     });

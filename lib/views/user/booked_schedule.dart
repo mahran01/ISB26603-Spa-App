@@ -11,6 +11,7 @@ import 'package:spa_app/models/facialbook.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/facialbook_service.dart';
 import 'package:spa_app/services/user_service.dart';
+import 'package:spa_app/views/user/update_schedule.dart';
 
 class SchedulePage extends StatefulWidget {
   const SchedulePage({super.key});
@@ -20,9 +21,9 @@ class SchedulePage extends StatefulWidget {
 }
 
 class _SchedulePageState extends State<SchedulePage> {
-  update() async {}
-
   late List<Facialbook> fb;
+
+  update() async {}
 
   delete(BuildContext context, int index) async {
     await context
@@ -62,7 +63,14 @@ class _SchedulePageState extends State<SchedulePage> {
                 services: decodeList(fb[index].services),
                 date: DateFormat.yMMMd().format(fb[index].appointmentDate),
                 time: timeToString(fb[index].appointmentTime),
-                update: () {},
+                update: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UpdateFacialBookPage(fb: fb[index]),
+                    ),
+                  );
+                },
                 delete: () => delete(context, index),
               );
             },
