@@ -2,60 +2,81 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_app/components/schedule_card.dart';
+import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/functions/shared.dart';
 import 'package:spa_app/models/facialbook.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/facialbook_service.dart';
 import 'package:spa_app/services/user_service.dart';
+import 'package:spa_app/views/user/user_update_schedule_page.dart';
 
-class AdminSchedulePage extends StatefulWidget {
-  const AdminSchedulePage({super.key});
+class UserSchedulePage extends StatefulWidget {
+  const UserSchedulePage({super.key});
+
   @override
-  State<AdminSchedulePage> createState() => _AdminSchedulePageState();
+  State<UserSchedulePage> createState() => _UserSchedulePageState();
 }
 
-class _AdminSchedulePageState extends State<AdminSchedulePage> {
+class _UserSchedulePageState extends State<UserSchedulePage> {
   late List<Facialbook> fbList;
-  late List<User> userList;
 
-  update() {}
+  update() async {}
 
-  delete() {}
+  delete(BuildContext context, int index) async {
+    await context
+        .read<FacialBookService>()
+        .deleteFacialBook(fbList[index].bookid)
+        .then((result) {
+      if (result != "OK") {
+        showSnackBar(context, result);
+      } else {
+        setState(() {
+          showSnackBar(context, "Successfully delete");
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     fbList = context.read<FacialBookService>().getFacialBookList ?? [];
-    userList = context.read<UserService>().getAlUser ?? [];
-
     List<Facialbook> dueNowFb = getDueNowScedule(fbList);
     List<Facialbook> dueFb = getDueSchedule(fbList);
     List<Facialbook> overdueFb = getOverdueScehdule(fbList);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Schedule'),
+        title: Text('Schedule'),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding:
-              const EdgeInsets.only(top: 20, bottom: 30, left: 10, right: 10),
+              const EdgeInsets.only(top: 30, bottom: 30, left: 10, right: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               createText("Current Schedule"),
-              dueNowFb.isEmpty ? createNoSchedule() : createList(dueNowFb),
+              dueNowFb.isEmpty
+                  ? createNoSchedule()
+                  : createList(dueNowFb, disableUpdate: true),
               const SizedBox(height: 20.0),
               createText("Upcoming schedule"),
               dueFb.isEmpty ? createNoSchedule() : createList(dueFb),
               const SizedBox(height: 20.0),
               createText("Past schedule"),
-              overdueFb.isEmpty ? createNoSchedule() : createList(overdueFb),
+              overdueFb.isEmpty
+                  ? createNoSchedule()
+                  : createList(overdueFb, disableUpdate: true),
             ],
           ),
         ),
       ),
     );
+  }
+
+  String timeToString(TimeOfDay tod) {
+    return "${tod.hourOfPeriod.toString().padLeft(2, "0")}:${tod.minute.toString().padLeft(2, "0")} ${tod.hour < 12 ? "am" : "pm"}";
   }
 
   Widget createNoSchedule() {
@@ -89,23 +110,34 @@ class _AdminSchedulePageState extends State<AdminSchedulePage> {
     );
   }
 
-  Widget createList(List<Facialbook> fbList) {
+  Widget createList(List<Facialbook> books, {bool disableUpdate = false}) {
     return ListView.builder(
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: fbList.length,
+      itemCount: books.length,
       itemBuilder: (BuildContext context, int index) {
         return ScheduleCard(
-          title: "User #${getUserameFromBook(userList, fbList[index])}",
-          services: decodeList(fbList[index].services),
-          date: DateFormat.yMMMd().format(fbList[index].appointmentDate),
-          time: timeToString(fbList[index].appointmentTime),
+          services: decodeList(books[index].services),
+          date: DateFormat.yMMMd().format(books[index].appointmentDate),
+          time: timeToString(books[index].appointmentTime),
+          update: disableUpdate
+              ? null
+              : () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          UserUpdateSchedulePage(fb: books[index]),
+                    ),
+                  ).then((result) {
+                    if (result == "OK") {
+                      setState(() {});
+                    }
+                  });
+                },
+          delete: () => delete(context, index),
         );
       },
     );
-  }
-
-  String timeToString(TimeOfDay tod) {
-    return "${tod.hourOfPeriod.toString().padLeft(2, "0")}:${tod.minute.toString().padLeft(2, "0")} ${tod.hour < 12 ? "am" : "pm"}";
   }
 }

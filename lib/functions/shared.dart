@@ -56,7 +56,7 @@ List<Facialbook> getOverdueScehdule(List<Facialbook> fbList) {
     int n = combineDateTime(a.appointmentDate, a.appointmentTime)
         .compareTo(combineDateTime(b.appointmentDate, b.appointmentTime));
     if (n != 0) {
-      return n;
+      return -n;
     }
     return a.bookid.compareTo(b.bookid);
   });

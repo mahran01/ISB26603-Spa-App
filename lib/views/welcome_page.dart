@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:spa_app/components/spa_fix_button.dart';
-import 'package:spa_app/views/anonymous/default.dart';
+import 'package:spa_app/views/anonymous/default_home_page.dart';
 import 'package:spa_app/views/login_page.dart';
 import 'package:spa_app/views/signup_page.dart';
 
@@ -30,7 +30,7 @@ class WelcomePage extends StatelessWidget {
                   onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const DefaultPage(),
+                      builder: (context) => const DefaultHomePage(),
                     ),
                   ),
                   child: Text(

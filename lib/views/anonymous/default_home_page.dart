@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:spa_app/components/facial_decoration.dart';
-import 'package:spa_app/data_repository/assign_value.dart';
+import 'package:spa_app/data_repository/assigned_value.dart';
 import 'package:spa_app/models/treatment.dart';
-import 'package:spa_app/views/anonymous/al_to_login.dart';
-import 'package:spa_app/views/user/mbs_treatment_detail.dart';
+import 'package:spa_app/components/anonymous/al_to_login.dart';
+import 'package:spa_app/components/user/mbs_treatment_detail.dart';
 
-class DefaultPage extends StatelessWidget {
-  const DefaultPage({super.key});
+class DefaultHomePage extends StatelessWidget {
+  const DefaultHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Treatment> treat = AssignValue.treatment;
+    final List<Treatment> treat = AssignedValue.treatment;
 
     final double maxWidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -66,7 +66,7 @@ class DefaultPage extends StatelessWidget {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                 ),
-                itemCount: AssignValue.treatment.length,
+                itemCount: AssignedValue.treatment.length,
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (BuildContext context, int index) {

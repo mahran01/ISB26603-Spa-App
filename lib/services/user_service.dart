@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:spa_app/data_repository/db_helper.dart';
 import 'package:spa_app/models/admin.dart';
 import 'package:spa_app/models/account.dart';
-import 'package:spa_app/models/facialbook.dart';
 import 'package:spa_app/models/user.dart';
 
 enum AccountType { user, admin }

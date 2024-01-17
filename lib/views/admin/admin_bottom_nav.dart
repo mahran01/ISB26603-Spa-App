@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:spa_app/views/admin/admin_home_page.dart';
 import 'package:spa_app/views/admin/admin_schedule_page.dart';
 import 'package:spa_app/views/admin/admin_settings_page.dart';
-import 'package:spa_app/views/user/booked_schedule.dart';
-import 'package:spa_app/views/user/home.dart';
-import 'package:spa_app/views/user/setting.dart';
 
 class AdminBottomNav extends StatefulWidget {
   const AdminBottomNav({super.key, this.initialIndex = 0});

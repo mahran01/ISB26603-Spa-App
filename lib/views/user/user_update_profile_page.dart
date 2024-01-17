@@ -7,17 +7,16 @@ import 'package:spa_app/components/spa_long_button.dart';
 import 'package:spa_app/functions/validator_extension.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';
-import 'package:spa_app/views/user/bottom_navigation.dart';
-import 'package:spa_app/views/user/setting.dart';
+import 'package:spa_app/views/user/user_bottom_navigation.dart';
 
-class UpdateProfile extends StatefulWidget {
-  const UpdateProfile({super.key});
+class UserUpdateProfilePage extends StatefulWidget {
+  const UserUpdateProfilePage({super.key});
 
   @override
-  State<UpdateProfile> createState() => _UpdateProfileState();
+  State<UserUpdateProfilePage> createState() => _UserUpdateProfilePageState();
 }
 
-class _UpdateProfileState extends State<UpdateProfile> {
+class _UserUpdateProfilePageState extends State<UserUpdateProfilePage> {
   final _formKey = GlobalKey<FormState>();
 
   late User user = context.read<UserService>().getCurrentUser!;
@@ -48,12 +47,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
           showSnackBar(context, result);
         } else {
           showSnackBar(context, "Successfully updated");
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const BottomNavigation(initialIndex: 2),
-            ),
-          );
+          Navigator.pop(context, "OK");
         }
       });
     }
@@ -61,8 +55,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
   @override
   Widget build(BuildContext context) {
-    String userid, name, email, phone, username, password;
-    userid = user.userid.toString();
+    String name, email, phone, username, password;
     name = user.name;
     email = user.email;
     phone = user.phone.toString();

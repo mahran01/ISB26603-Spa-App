@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spa_app/components/admin/user_list.dart';
 import 'package:spa_app/components/facial_decoration.dart';
-import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/models/admin.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';

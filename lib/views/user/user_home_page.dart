@@ -4,11 +4,9 @@ import 'package:spa_app/components/facial_decoration.dart';
 import 'package:spa_app/config/routes/route_manager.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';
-import 'package:spa_app/views/user/mbs_treatment_detail.dart';
-import 'package:spa_app/data_repository/assign_value.dart';
+import 'package:spa_app/components/user/mbs_treatment_detail.dart';
+import 'package:spa_app/data_repository/assigned_value.dart';
 import 'package:spa_app/models/treatment.dart';
-import 'package:spa_app/views/login_page.dart';
-import 'package:spa_app/views/user/booking_page.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key, this.gotoPage});
@@ -18,14 +16,9 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     User user = context.read<UserService>().getCurrentUser!;
-    String userid, name, email, phone, username, password;
-    userid = user.userid.toString();
-    name = user.name;
-    email = user.email;
-    phone = user.phone.toString();
-    username = user.username;
-    password = user.password;
-    final List<Treatment> treat = AssignValue.treatment;
+    String name = user.name;
+
+    final List<Treatment> treat = AssignedValue.treatment;
 
     final double maxWidth = MediaQuery.of(context).size.width;
     return WillPopScope(
@@ -89,7 +82,7 @@ class Home extends StatelessWidget {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                   ),
-                  itemCount: AssignValue.treatment.length,
+                  itemCount: AssignedValue.treatment.length,
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {

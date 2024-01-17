@@ -6,10 +6,7 @@ import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/components/spa_long_button.dart';
 import 'package:spa_app/functions/validator_extension.dart';
 import 'package:spa_app/models/admin.dart';
-import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';
-import 'package:spa_app/views/user/bottom_navigation.dart';
-import 'package:spa_app/views/user/setting.dart';
 
 class AdminUpdateProfilePage extends StatefulWidget {
   const AdminUpdateProfilePage({super.key});

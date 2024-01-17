@@ -1,6 +1,6 @@
 import 'package:spa_app/models/treatment.dart';
 
-class AssignValue {
+class AssignedValue {
   static final List<Treatment> treatment = [
     Treatment(
       name: "Acne treatment",

@@ -1,24 +1,29 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spa_app/data_repository/assign_value.dart';
+import 'package:spa_app/data_repository/assigned_value.dart';
+import 'package:spa_app/functions/shared.dart';
 import 'package:spa_app/models/treatment.dart';
+import 'package:spa_app/views/user/user_bottom_navigation.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/models/facialbook.dart';
 import 'package:spa_app/services/facialbook_service.dart';
 import 'package:spa_app/services/user_service.dart';
-import 'package:spa_app/functions/shared.dart';
 
-class BookingPage extends StatefulWidget {
-  const BookingPage({super.key, this.selectedIndex, this.onComplete});
+class UserUpdateSchedulePage extends StatefulWidget {
+  const UserUpdateSchedulePage(
+      {super.key, this.selectedIndex, required this.fb});
+
+  final Facialbook fb;
 
   final int? selectedIndex;
-  final void Function()? onComplete;
   @override
-  State<BookingPage> createState() => _BookingPageState();
+  State<UserUpdateSchedulePage> createState() => _UserUpdateSchedulePageState();
 }
 
-class _BookingPageState extends State<BookingPage> {
+class _UserUpdateSchedulePageState extends State<UserUpdateSchedulePage> {
   //declaration
   CalendarFormat _format = CalendarFormat.month;
   DateTime _focusDay = DateTime.now();
@@ -30,15 +35,28 @@ class _BookingPageState extends State<BookingPage> {
   bool _timeSelected = false;
   bool _btnDateTimeDisabled = true;
   bool _btnServicesDisabled = true;
-  List<Treatment> treatments = AssignValue.treatment;
+  List<Treatment> treatments = AssignedValue.treatment;
   List<bool> treatmentsChecked =
-      List.filled(AssignValue.treatment.length, false);
+      List.filled(AssignedValue.treatment.length, false);
+
+  late Facialbook fb;
 
   String? token; //get token for insert booking date and time into database
 
   @override
   void initState() {
     super.initState();
+    fb = widget.fb;
+    _currentDay = fb.appointmentDate;
+    _currentIndex = fb.appointmentTime.hour;
+    _dateSelected = true;
+    _timeSelected = true;
+    _isWeekend = false;
+    _btnDateTimeDisabled = false;
+    _btnServicesDisabled = false;
+    treatmentsChecked = treatments
+        .map((e) => (jsonDecode(fb.services).toString()).contains(e.name))
+        .toList();
     if (widget.selectedIndex != null) {
       treatmentsChecked[widget.selectedIndex!] = true;
     }
@@ -49,7 +67,7 @@ class _BookingPageState extends State<BookingPage> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Booking'),
+        title: const Text('Update Booking'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -240,7 +258,7 @@ class _BookingPageState extends State<BookingPage> {
     serviceString = "[$serviceString]";
 
     Facialbook fb = Facialbook(
-      bookid: 0,
+      bookid: this.fb.bookid,
       userid: userid,
       appointmentDate: datePicked,
       appointmentTime: timePicked,
@@ -249,7 +267,7 @@ class _BookingPageState extends State<BookingPage> {
 
     Navigator.pop(context);
 
-    await context.read<FacialBookService>().makeAppointment(fb).then((result) {
+    await context.read<FacialBookService>().updateFacialBook(fb).then((result) {
       if (result != 'OK') {
         showSnackBar(context, result);
         return;
@@ -258,9 +276,8 @@ class _BookingPageState extends State<BookingPage> {
             .read<FacialBookService>()
             .bindUserFacialbook(userid)
             .then((value) {
-          if (widget.onComplete != null) widget.onComplete!();
-          Navigator.pop(context);
-          showSnackBar(context, "Added successsfully");
+          Navigator.pop(context, "OK");
+          showSnackBar(context, "Update successsfully");
         });
       }
     });

@@ -4,12 +4,11 @@ import 'package:spa_app/services/facialbook_service.dart';
 import 'package:spa_app/services/user_service.dart';
 import 'package:spa_app/views/admin/admin_add_user_page.dart';
 import 'package:spa_app/views/admin/admin_bottom_nav.dart';
-import 'package:spa_app/views/admin/admin_home_page.dart';
 import 'package:spa_app/views/admin/admin_update_profile_page.dart';
 import 'package:spa_app/views/login_page.dart';
 import 'package:spa_app/views/signup_page.dart';
-import 'package:spa_app/views/user/booking_page.dart';
-import 'package:spa_app/views/user/bottom_navigation.dart';
+import 'package:spa_app/views/user/user_booking_page.dart';
+import 'package:spa_app/views/user/user_bottom_navigation.dart';
 import 'package:spa_app/views/welcome_page.dart';
 
 class RouteManager {
@@ -45,14 +44,16 @@ class RouteManager {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => BottomNavigation(initialIndex: initialIndex),
+          builder: (context) =>
+              UserBottomNavigation(initialIndex: initialIndex),
         ),
       );
     } else {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => BottomNavigation(initialIndex: initialIndex),
+          builder: (context) =>
+              UserBottomNavigation(initialIndex: initialIndex),
         ),
       );
     }
@@ -84,8 +85,8 @@ class RouteManager {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            BookingPage(onComplete: onComplete, selectedIndex: selectedIndex),
+        builder: (context) => UserBookingPage(
+            onComplete: onComplete, selectedIndex: selectedIndex),
       ),
     );
   }
@@ -120,7 +121,7 @@ class RouteManager {
   static LoginPage loginPage() => const LoginPage();
   static SignUpPage signUpPage() => const SignUpPage();
   static AdminBottomNav adminHomePage() => const AdminBottomNav();
-  static BottomNavigation userHomePage() => const BottomNavigation();
+  static UserBottomNavigation userHomePage() => const UserBottomNavigation();
 
   static Map<String, Widget Function(BuildContext)> getRoutes() {
     return {

@@ -1,27 +1,24 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spa_app/data_repository/assign_value.dart';
+import 'package:spa_app/data_repository/assigned_value.dart';
 import 'package:spa_app/models/treatment.dart';
-import 'package:spa_app/views/user/bottom_navigation.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:spa_app/components/show_snackbar.dart';
 import 'package:spa_app/models/facialbook.dart';
 import 'package:spa_app/services/facialbook_service.dart';
 import 'package:spa_app/services/user_service.dart';
+import 'package:spa_app/functions/shared.dart';
 
-class UpdateFacialBookPage extends StatefulWidget {
-  const UpdateFacialBookPage({super.key, this.selectedIndex, required this.fb});
-
-  final Facialbook fb;
+class UserBookingPage extends StatefulWidget {
+  const UserBookingPage({super.key, this.selectedIndex, this.onComplete});
 
   final int? selectedIndex;
+  final void Function()? onComplete;
   @override
-  State<UpdateFacialBookPage> createState() => _UpdateFacialBookPageState();
+  State<UserBookingPage> createState() => _UserBookingPageState();
 }
 
-class _UpdateFacialBookPageState extends State<UpdateFacialBookPage> {
+class _UserBookingPageState extends State<UserBookingPage> {
   //declaration
   CalendarFormat _format = CalendarFormat.month;
   DateTime _focusDay = DateTime.now();
@@ -33,28 +30,15 @@ class _UpdateFacialBookPageState extends State<UpdateFacialBookPage> {
   bool _timeSelected = false;
   bool _btnDateTimeDisabled = true;
   bool _btnServicesDisabled = true;
-  List<Treatment> treatments = AssignValue.treatment;
+  List<Treatment> treatments = AssignedValue.treatment;
   List<bool> treatmentsChecked =
-      List.filled(AssignValue.treatment.length, false);
-
-  late Facialbook fb;
+      List.filled(AssignedValue.treatment.length, false);
 
   String? token; //get token for insert booking date and time into database
 
   @override
   void initState() {
     super.initState();
-    fb = widget.fb;
-    _currentDay = fb.appointmentDate;
-    _currentIndex = fb.appointmentTime.hour;
-    _dateSelected = true;
-    _timeSelected = true;
-    _isWeekend = false;
-    _btnDateTimeDisabled = false;
-    _btnServicesDisabled = false;
-    treatmentsChecked = treatments
-        .map((e) => (jsonDecode(fb.services).toString()).contains(e.name))
-        .toList();
     if (widget.selectedIndex != null) {
       treatmentsChecked[widget.selectedIndex!] = true;
     }
@@ -65,7 +49,7 @@ class _UpdateFacialBookPageState extends State<UpdateFacialBookPage> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Update Booking'),
+        title: const Text('Booking'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -105,9 +89,6 @@ class _UpdateFacialBookPageState extends State<UpdateFacialBookPage> {
       ),
     );
   }
-
-  DateTime combineDateTime(DateTime dt, TimeOfDay tod) =>
-      DateTime(dt.year, dt.month, dt.day, tod.hour, tod.minute);
 
   void showSpaBottomSheet(ThemeData theme) {
     showModalBottomSheet(
@@ -259,7 +240,7 @@ class _UpdateFacialBookPageState extends State<UpdateFacialBookPage> {
     serviceString = "[$serviceString]";
 
     Facialbook fb = Facialbook(
-      bookid: this.fb.bookid,
+      bookid: 0,
       userid: userid,
       appointmentDate: datePicked,
       appointmentTime: timePicked,
@@ -268,7 +249,7 @@ class _UpdateFacialBookPageState extends State<UpdateFacialBookPage> {
 
     Navigator.pop(context);
 
-    await context.read<FacialBookService>().updateFacialBook(fb).then((result) {
+    await context.read<FacialBookService>().makeAppointment(fb).then((result) {
       if (result != 'OK') {
         showSnackBar(context, result);
         return;
@@ -277,13 +258,9 @@ class _UpdateFacialBookPageState extends State<UpdateFacialBookPage> {
             .read<FacialBookService>()
             .bindUserFacialbook(userid)
             .then((value) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const BottomNavigation(initialIndex: 1),
-            ),
-          );
-          showSnackBar(context, "Update successsfully");
+          if (widget.onComplete != null) widget.onComplete!();
+          Navigator.pop(context);
+          showSnackBar(context, "Added successsfully");
         });
       }
     });

@@ -4,27 +4,28 @@ import 'package:spa_app/components/table_profile.dart';
 import 'package:spa_app/config/routes/route_manager.dart';
 import 'package:spa_app/models/user.dart';
 import 'package:spa_app/services/user_service.dart';
-import 'package:spa_app/views/user/update_profile.dart';
-import 'package:spa_app/views/welcome_page.dart';
-import 'package:spa_app/components/table_profile.dart';
+import 'package:spa_app/views/user/user_update_profile_page.dart';
 
-class Setting extends StatelessWidget {
-  const Setting({super.key});
+class UserSettingsPage extends StatefulWidget {
+  const UserSettingsPage({super.key});
 
+  @override
+  State<UserSettingsPage> createState() => _UserSettingsPageState();
+}
+
+class _UserSettingsPageState extends State<UserSettingsPage> {
   @override
   Widget build(BuildContext context) {
     User user = context.read<UserService>().getCurrentUser!;
-    String userid, name, email, phone, username, password;
-    userid = user.userid.toString();
+    String name, email, phone, username;
     name = user.name;
     email = user.email;
     phone = user.phone.toString();
     username = user.username;
-    password = user.password;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Setting'),
+        title: Text('Settings'),
         automaticallyImplyLeading: false,
       ),
       body: Padding(
@@ -61,9 +62,13 @@ class Setting extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const UpdateProfile(),
+                    builder: (context) => const UserUpdateProfilePage(),
                   ),
-                );
+                ).then((result) {
+                  if (result == "OK") {
+                    setState(() {});
+                  }
+                });
               },
               leading: Container(
                 padding: EdgeInsets.all(10),

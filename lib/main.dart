@@ -4,8 +4,6 @@ import 'package:spa_app/config/routes/route_manager.dart';
 import 'package:spa_app/config/theme/app_theme.dart';
 import 'package:spa_app/services/facialbook_service.dart';
 import 'package:spa_app/services/user_service.dart';
-import 'package:spa_app/views/login_page.dart';
-import 'package:spa_app/views/signup_page.dart';
 import 'package:spa_app/views/welcome_page.dart';
 
 void main() {

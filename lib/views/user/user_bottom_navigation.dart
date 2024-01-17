@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:spa_app/models/treatment.dart';
-import 'package:spa_app/views/user/booked_schedule.dart';
-import 'package:spa_app/views/user/home.dart';
-import 'package:spa_app/views/user/setting.dart';
+import 'package:spa_app/views/user/user_schedule_page.dart';
+import 'package:spa_app/views/user/user_home_page.dart';
+import 'package:spa_app/views/user/user_settings_page.dart';
 
-class BottomNavigation extends StatefulWidget {
-  const BottomNavigation({super.key, this.initialIndex = 0});
+class UserBottomNavigation extends StatefulWidget {
+  const UserBottomNavigation({super.key, this.initialIndex = 0});
 
   final int initialIndex;
 
   @override
-  State<BottomNavigation> createState() => _BottomNavigationState();
+  State<UserBottomNavigation> createState() => _UserBottomNavigationState();
 }
 
-class _BottomNavigationState extends State<BottomNavigation> {
+class _UserBottomNavigationState extends State<UserBottomNavigation> {
   int _selectedIndex = 0;
 
   // 8
   static List<Widget> pages = <Widget>[
     Home(gotoPage: null),
-    const SchedulePage(),
-    const Setting(),
+    const UserSchedulePage(),
+    const UserSettingsPage(),
   ];
 
   // 9
@@ -59,7 +58,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
             const BottomNavigationBarItem(
                 icon: Icon(Icons.calendar_today), label: 'Shcedule'),
             const BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: 'Setting'),
+                icon: Icon(Icons.settings), label: 'Settings'),
           ],
         ),
       ),

@@ -5,8 +5,6 @@ import 'package:spa_app/config/routes/route_manager.dart';
 import 'package:spa_app/models/admin.dart';
 import 'package:spa_app/services/user_service.dart';
 import 'package:spa_app/views/admin/admin_update_profile_page.dart';
-import 'package:spa_app/views/user/update_profile.dart';
-import 'package:spa_app/views/welcome_page.dart';
 
 class AdminSettingsPage extends StatefulWidget {
   const AdminSettingsPage({super.key});
